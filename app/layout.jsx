@@ -4,6 +4,9 @@ import "@/app/globals.css";
 
 export const metadata = {
   title: "Better Converter - Convert Images formats",
+  icons: {
+    icon: "/favicon.ico",
+  },
   description:
     "Convert images to any format with our easy-to-use online converter.",
 };
