@@ -1,4 +1,10 @@
-import { DownloadSimple, Image, ArrowLineDown } from "@phosphor-icons/react";
+"use client";
+import {
+  DownloadSimple,
+  ImageSquare,
+  ArrowLineDown,
+  CheckCircle,
+} from "@phosphor-icons/react";
 import {
   Card,
   CardContent,
@@ -7,58 +13,81 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { Label } from "@/components/ui/label";
 
 export default function ResultCard({ convertedUrl, format, downloadImage }) {
   return (
-    <Card className="flex flex-col border-neutral-800 bg-neutral-900">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center space-x-2 text-white">
+    <Card className="flex flex-col border-none bg-neutral-900/90 lg:h-full">
+      <CardHeader className="pb-2 flex-shrink-0">
+        <CardTitle className="flex items-center space-x-2 text-neutral-200">
           <DownloadSimple className="h-5 w-5" />
           <span>Converted Image</span>
         </CardTitle>
-        <CardDescription className="text-neutral-400">
+        <CardDescription className="text-sm text-neutral-400">
           {convertedUrl
             ? "Your converted image is ready for download"
             : "Converted image will appear here"}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col">
-        {convertedUrl ? (
-          <div className="flex h-full flex-col space-y-6">
-            <div className="flex flex-1 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-800/50 p-4">
-              <img
-                src={convertedUrl}
-                alt="Converted"
-                className="max-h-full max-w-full rounded-lg object-contain"
-              />
-            </div>
+      <CardContent className="flex flex-col h-full">
+        <div className="mb-auto">
+          <div
+            className={`rounded-md border-2 p-6 sm:p-8 text-center transition-all duration-200 h-[280px] flex items-center justify-center ${
+              convertedUrl ? "border-[#e6fda3]/5 bg-[#e6fda3]/5" : "border-none"
+            }`}
+          >
+            {convertedUrl ? (
+              <div className="space-y-3">
+                <Image
+                  src={convertedUrl}
+                  alt="Converted"
+                  className="mx-auto rounded-md object-contain max-h-[240px] max-w-full"
+                  width={400}
+                  height={400}
+                />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <ImageSquare className="mx-auto h-10 w-10 text-neutral-500" />
+                <div>
+                  <p className="font-medium text-neutral-300">
+                    No converted image yet
+                  </p>
+                  <p className="mt-1 text-sm text-neutral-500">
+                    Upload and convert an image to see it here
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
-            <div className="space-y-4">
-              <Button
-                onClick={downloadImage}
-                className="w-full py-6 bg-neutral-800 hover:bg-neutral-700 cursor-pointer transition-colors duration-200"
-                size="lg"
-              >
-                Download {format.toUpperCase()}
-                <ArrowLineDown weight="bold" className="ml-1 h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex h-full items-center justify-center text-center">
-            <div className="space-y-4">
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-neutral-800">
-                <Image className="h-10 w-10 text-neutral-600" />
+        <div className="space-y-3 mt-6">
+          {convertedUrl && (
+            <div className="space-y-1">
+              <div className="flex items-center space-x-1">
+                <CheckCircle weight="bold" className="h-4 w-4 text-[#e6fda3]" />
+                <Label className="text-sm font-medium text-neutral-200">
+                  Converted
+                </Label>
               </div>
-              <div>
-                <p className="text-neutral-400">No converted image yet</p>
-                <p className="text-sm text-neutral-500">
-                  Upload and convert an image to see it here
-                </p>
-              </div>
+              <p className="text-xs text-neutral-500">
+                Image processed in {format.toUpperCase()} format
+              </p>
             </div>
-          </div>
-        )}
+          )}
+
+          <Button
+            onClick={downloadImage}
+            disabled={!convertedUrl}
+            className="w-full py-6 mt-2 bg-neutral-700 hover:bg-neutral-700/70 cursor-pointer transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            size="lg"
+          >
+            Download {format.toUpperCase()}
+            <ArrowLineDown weight="bold" className="ml-1 h-5 w-5" />
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

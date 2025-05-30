@@ -1,5 +1,5 @@
 import { ReactScan } from "@/lib/react-scan";
-import { ibmPlexSans, ibmPlexMono } from "@/app/fonts";
+import { funnelSans } from "@/app/fonts";
 import "@/app/globals.css";
 
 export const metadata = {
@@ -15,9 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ReactScan />
-      <body
-        className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} antialiased bg-neutral-950`}
-      >
+      <body className={`${funnelSans.variable} antialiased bg-neutral-950`}>
         {children}
       </body>
     </html>

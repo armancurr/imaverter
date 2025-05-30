@@ -1,6 +1,6 @@
 "use client";
-
 import { useState } from "react";
+import { motion } from "framer-motion";
 import Header from "@/components/layout/header";
 import UploadCard from "@/components/layout/upload-card";
 import ResultCard from "@/components/layout/result-card";
@@ -27,18 +27,15 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) return;
-
     setLoading(true);
     const formData = new FormData();
     formData.append("file", file);
     formData.append("format", format);
-
     try {
       const res = await fetch("/api/convert", {
         method: "POST",
         body: formData,
       });
-
       if (res.ok) {
         const data = await res.json();
         setConvertedUrl(data.url);
@@ -61,7 +58,6 @@ export default function Home() {
 
   const downloadImage = async () => {
     if (!convertedUrl) return;
-
     const response = await fetch(convertedUrl);
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
@@ -74,32 +70,59 @@ export default function Home() {
     document.body.removeChild(a);
   };
 
+  const fadeInBlur = {
+    initial: {
+      opacity: 0,
+      filter: "blur(10px)",
+    },
+    animate: {
+      opacity: 1,
+      filter: "blur(0px)",
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-300">
-      <Header />
-      <div className="container mx-auto h-[calc(100vh-88px)] px-6 py-6">
-        <div className="grid h-full grid-cols-1 gap-6 lg:grid-cols-2">
-          <UploadCard
-            file={file}
-            setFile={setFile}
-            format={format}
-            setFormat={setFormat}
-            formatOptions={formatOptions}
-            loading={loading}
-            handleSubmit={handleSubmit}
-            preview={preview}
-            dragActive={dragActive}
-            setDragActive={setDragActive}
-            setPreview={setPreview}
-            setConvertedUrl={setConvertedUrl}
-          />
-          <ResultCard
-            convertedUrl={convertedUrl}
-            format={format}
-            downloadImage={downloadImage}
-          />
+    <motion.div
+      className="min-h-screen bg-neutral-950 text-neutral-300"
+      initial="initial"
+      animate="animate"
+    >
+      <motion.div variants={fadeInBlur} transition={{ duration: 0.3 }}>
+        <Header />
+      </motion.div>
+
+      <motion.div
+        className="container mx-auto px-6 py-2"
+        variants={fadeInBlur}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:h-[calc(100vh-170px)]">
+          <motion.div variants={fadeInBlur} transition={{ duration: 0.3 }}>
+            <UploadCard
+              file={file}
+              setFile={setFile}
+              format={format}
+              setFormat={setFormat}
+              formatOptions={formatOptions}
+              loading={loading}
+              handleSubmit={handleSubmit}
+              preview={preview}
+              dragActive={dragActive}
+              setDragActive={setDragActive}
+              setPreview={setPreview}
+              setConvertedUrl={setConvertedUrl}
+            />
+          </motion.div>
+
+          <motion.div variants={fadeInBlur} transition={{ duration: 0.3 }}>
+            <ResultCard
+              convertedUrl={convertedUrl}
+              format={format}
+              downloadImage={downloadImage}
+            />
+          </motion.div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

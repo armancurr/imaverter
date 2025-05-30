@@ -1,8 +1,9 @@
+"use client";
 import {
   UploadSimple,
   FileImage,
   Spinner,
-  ArrowRight,
+  ArrowLineRight,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import FormatSelector from "./format-selector";
+import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 export default function UploadCard({
   file,
@@ -61,9 +64,9 @@ export default function UploadCard({
   };
 
   return (
-    <Card className="flex flex-col border-neutral-800 bg-neutral-900">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center space-x-2 text-white">
+    <Card className="flex flex-col border-none bg-neutral-900/90 lg:h-full">
+      <CardHeader className="pb-2 flex-shrink-0">
+        <CardTitle className="flex items-center space-x-2 text-neutral-200">
           <UploadSimple className="h-5 w-5" />
           <span>Upload Image</span>
         </CardTitle>
@@ -71,10 +74,10 @@ export default function UploadCard({
           Select an image to convert to your desired format
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col space-y-6">
-        <div className="flex-1 space-y-6">
+      <CardContent className="flex flex-col h-full">
+        <div className="mb-auto">
           <div
-            className={`rounded-md border-2 border-dashed p-16 text-center transition-all duration-200 ${
+            className={`rounded-md border-2 border-dashed p-6 sm:p-8 text-center transition-all duration-200 h-[280px] flex items-center justify-center ${
               dragActive
                 ? "border-[#e6fda3] bg-[#e6fda3]/5"
                 : file
@@ -86,61 +89,63 @@ export default function UploadCard({
             onDragOver={handleDrag}
             onDrop={handleDrop}
           >
-            <input
+            <Input
+              id="file-upload"
               type="file"
               accept="image/*"
-              onChange={(e) => handleFileChange(e.target.files[0])}
               className="hidden"
-              id="file-upload"
+              onChange={(e) => handleFileChange(e.target.files[0])}
             />
+
             <label htmlFor="file-upload" className="block cursor-pointer">
               {preview ? (
-                <div className="space-y-4">
-                  <img
+                <div className="space-y-3">
+                  <Image
                     src={preview}
                     alt="Preview"
-                    className="mx-auto h-32 max-w-full rounded-md object-contain"
+                    className="mx-auto rounded-md object-contain max-h-[240px] max-w-full"
+                    width={400}
+                    height={400}
                   />
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <FileImage className="mx-auto h-12 w-12 text-neutral-500" />
+                <div className="space-y-3">
+                  <FileImage className="mx-auto h-10 w-10 text-neutral-500" />
                   <div>
                     <p className="font-medium text-neutral-300">
                       Click to upload or drag and drop
                     </p>
-                    <p className="mt-1 text-xs text-neutral-500">
-                      PNG, JPG, WEBP, GIF up to 10MB
+                    <p className="mt-1 text-sm text-neutral-500">
+                      PNG, JPG, WEBP up to 10MB
                     </p>
                   </div>
                 </div>
               )}
             </label>
           </div>
+        </div>
 
+        <div className="space-y-3 mt-6">
           <FormatSelector
             format={format}
             setFormat={setFormat}
             formatOptions={formatOptions}
           />
-        </div>
 
-        <div className="space-y-4">
           <Button
             onClick={handleSubmit}
             disabled={!file || loading}
-            className="w-full bg-[#e6fda3] py-6 text-neutral-950 hover:bg-[#e6fda3]/70 transition-colors duration-200 cursor-pointer"
+            className="w-full bg-neutral-700 py-6 mt-2 text-neutral-200 hover:bg-neutral-700/70 transition-colors duration-200 cursor-pointer"
             size="lg"
           >
             {loading ? (
               <>
-                <Spinner className="mr-2 h-5 w-5 animate-spin" />
-                Converting...
+                <Spinner className="h-5 w-5 animate-spin" />
               </>
             ) : (
               <>
                 Convert to {format.toUpperCase()}
-                <ArrowRight weight="bold" className="ml-1 h-5 w-5" />
+                <ArrowLineRight weight="bold" className="ml-1 h-5 w-5" />
               </>
             )}
           </Button>

@@ -1,10 +1,5 @@
+"use client";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 function GithubSVG({ className = "h-5 w-5" }) {
   return (
@@ -35,35 +30,27 @@ function GithubSVG({ className = "h-5 w-5" }) {
 
 export default function Header() {
   return (
-    <div className="border-b border-neutral-800 bg-neutral-950/50 backdrop-blur-sm">
-      <div className="container mx-auto flex justify-end px-6 py-4">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="secondary"
-                className="flex items-center gap-2 bg-neutral-900 text-neutral-300 hover:bg-neutral-800 transition-colors duration-200"
-                asChild
-              >
-                <a
-                  href="https://github.com/armancurr/file-converter"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <GithubSVG className="h-5 w-5" />
-                  Source Code
-                </a>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="bg-neutral-900 border-none text-neutral-300"
-            >
-              If you found this project useful, please consider starring the
-              repo!
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+    <div className="bg-transparent">
+      <div className="container mx-auto flex flex-col items-center justify-center px-6 py-6">
+        <Button
+          variant="secondary"
+          className="flex items-center gap-2 bg-neutral-900 text-neutral-300 hover:bg-neutral-800 transition-colors duration-200 mb-2"
+          asChild
+        >
+          <a
+            href="https://github.com/armancurr/file-converter"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <GithubSVG className="h-5 w-5" />
+            Source Code
+          </a>
+        </Button>
+        <p className="text-xs text-neutral-400 text-center max-w-md">
+          If you find this tool helpful, please consider starring the GitHub
+          repo to keep it open source! Your support helps us improve the tool
+          for everyone.
+        </p>
       </div>
     </div>
   );
