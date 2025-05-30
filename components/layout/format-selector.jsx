@@ -1,20 +1,31 @@
 import { Label } from "@/components/ui/label";
+import { memo } from "react";
 
-export default function FormatSelector({ format, setFormat, formatOptions }) {
+const FormatSelector = memo(function FormatSelector({
+  format,
+  setFormat,
+  formatOptions,
+}) {
   return (
-    <div className="space-y-3">
-      <Label id="format-grid-label" className="text-neutral-300">
+    <div className="space-y-4">
+      <Label
+        id="format-grid-label"
+        className="text-sm font-semibold text-neutral-200 mb-1"
+      >
         Convert to format
       </Label>
+      <p className="text-xs text-neutral-400">
+        Choose the file type you want to convert your image to.
+      </p>
+
       <div
         role="radiogroup"
         aria-labelledby="format-grid-label"
-        className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3"
+        className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
         {formatOptions.map((option) => {
           const isSelected = format === option.value;
           const labelId = `format-option-label-${option.value}`;
-          const descriptionId = `format-option-desc-${option.value}`;
 
           return (
             <button
@@ -23,28 +34,41 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
               role="radio"
               aria-checked={isSelected}
               aria-labelledby={labelId}
-              aria-describedby={descriptionId}
               onClick={() => setFormat(option.value)}
               className={`
-                w-full rounded-lg border p-3 text-left 
-                transition-all duration-150 ease-in-out 
-                focus:outline-none focus-visible:ring-2 
-                focus-visible:ring-offset-2 focus-visible:ring-[#e6fda3] 
-                focus-visible:ring-offset-neutral-950 
-                sm:p-4 
+                group relative w-full rounded-xl p-4 text-center
+                transition-all duration-200 ease-out
+                focus:outline-none focus-visible:ring-2
+                focus-visible:ring-[#e6fda3] focus-visible:ring-offset-2
+                focus-visible:ring-offset-neutral-950
                 ${
                   isSelected
-                    ? "border-3 border-[#e6fda3] bg-neutral-700 text-white shadow-md"
-                    : "border-neutral-700 bg-neutral-800 text-white hover:border-neutral-600 hover:bg-neutral-700"
+                    ? "bg-[#e6fda3]/10 text-[#e6fda3]"
+                    : "bg-neutral-800/50 hover:bg-neutral-700/70 text-white"
                 }
               `}
             >
               <div className="flex w-full items-center justify-between">
                 <span
                   id={labelId}
-                  className="font-medium text-sm sm:text-base"
+                  className={`text-lg font-bold transition-colors duration-200 ${
+                    isSelected
+                      ? "text-[#e6fda3]"
+                      : "text-white group-hover:text-neutral-100"
+                  }`}
                 >
                   {option.label}
+                </span>
+                <span
+                  className={`
+                    flex h-5 w-5 items-center justify-center rounded-full
+                    transition-all duration-200
+                    ${isSelected ? "bg-[#e6fda3]" : "bg-neutral-700"}
+                  `}
+                >
+                  {isSelected && (
+                    <span className="h-2 w-2 rounded-full bg-neutral-900" />
+                  )}
                 </span>
               </div>
             </button>
@@ -53,4 +77,6 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
       </div>
     </div>
   );
-}
+});
+
+export default FormatSelector;

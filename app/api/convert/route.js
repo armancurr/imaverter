@@ -8,7 +8,7 @@ export async function POST(request) {
   if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
     return new Response(
       JSON.stringify({ error: "Missing Cloudinary credentials" }),
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -17,10 +17,9 @@ export async function POST(request) {
   const format = formData.get("format");
 
   if (!file || !format) {
-    return new Response(
-      JSON.stringify({ error: "Missing file or format" }),
-      { status: 400 }
-    );
+    return new Response(JSON.stringify({ error: "Missing file or format" }), {
+      status: 400,
+    });
   }
 
   const timestamp = Math.floor(Date.now() / 1000);
@@ -55,17 +54,43 @@ export async function POST(request) {
     const error = await uploadRes.text();
     return new Response(
       JSON.stringify({ error: "Upload failed", details: error }),
-      { status: 500 }
+      { status: 500 },
     );
   }
 
   const uploadResult = await uploadRes.json();
 
   let transformedUrl;
-  if (format === "jpg" || format === "jpeg") {
-    transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_jpg,q_auto/${uploadResult.public_id}.jpg`;
-  } else {
-    transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_${format},q_auto/${uploadResult.public_id}.${format}`;
+
+  switch (format.toLowerCase()) {
+    case "jpg":
+    case "jpeg":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_jpg,q_auto/${uploadResult.public_id}.jpg`;
+      break;
+    case "png":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_png,q_auto/${uploadResult.public_id}.png`;
+      break;
+    case "webp":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_webp,q_auto/${uploadResult.public_id}.webp`;
+      break;
+    case "avif":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_avif,q_auto/${uploadResult.public_id}.avif`;
+      break;
+    case "gif":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_gif/${uploadResult.public_id}.gif`;
+      break;
+    case "tiff":
+    case "tif":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_tiff,q_auto/${uploadResult.public_id}.tiff`;
+      break;
+    case "bmp":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_bmp/${uploadResult.public_id}.bmp`;
+      break;
+    case "ico":
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_ico,w_256,h_256/${uploadResult.public_id}.ico`;
+      break;
+    default:
+      transformedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_${format},q_auto/${uploadResult.public_id}.${format}`;
   }
 
   return new Response(
@@ -77,7 +102,7 @@ export async function POST(request) {
     {
       status: 200,
       headers: { "Content-Type": "application/json" },
-    }
+    },
   );
 }
 

@@ -31,7 +31,7 @@ export async function GET(request) {
         resource_type: "image",
         timestamp,
       },
-      CLOUDINARY_API_SECRET
+      CLOUDINARY_API_SECRET,
     );
 
     const form = new FormData();
@@ -51,7 +51,7 @@ export async function GET(request) {
       const error = await searchRes.text();
       return new Response(
         JSON.stringify({ error: "Search failed", details: error }),
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function GET(request) {
           public_id: resource.public_id,
           timestamp: delTimestamp,
         },
-        CLOUDINARY_API_SECRET
+        CLOUDINARY_API_SECRET,
       );
 
       const delForm = new FormData();
@@ -85,7 +85,7 @@ export async function GET(request) {
 
     return new Response(
       JSON.stringify({ deleted, message: "Cleanup complete" }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      { status: 200, headers: { "Content-Type": "application/json" } },
     );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {

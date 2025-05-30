@@ -7,19 +7,21 @@ import ResultCard from "@/components/layout/result-card";
 
 export default function Home() {
   const [file, setFile] = useState(null);
-  const [format, setFormat] = useState("png");
+  const [format, setFormat] = useState("jpg");
   const [convertedUrl, setConvertedUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
   const [dragActive, setDragActive] = useState(false);
 
   const formatOptions = [
-    { value: "png", label: "PNG" },
     { value: "jpg", label: "JPG" },
+    { value: "png", label: "PNG" },
     { value: "webp", label: "WEBP" },
     { value: "avif", label: "AVIF" },
+    { value: "gif", label: "GIF" },
     { value: "tiff", label: "TIFF" },
     { value: "bmp", label: "BMP" },
+    { value: "ico", label: "ICO" },
   ];
 
   const handleSubmit = async (e) => {

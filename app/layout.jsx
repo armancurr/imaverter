@@ -1,8 +1,9 @@
-import "@/app/globals.css";
+import { ReactScan } from "@/lib/react-scan";
 import { ibmPlexSans, ibmPlexMono } from "@/app/fonts";
+import "@/app/globals.css";
 
 export const metadata = {
-  title: "Converter - Convert Images formats",
+  title: "Better Converter - Convert Images formats",
   description:
     "Convert images to any format with our easy-to-use online converter.",
 };
@@ -10,8 +11,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <ReactScan />
       <body
-        className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} antialiased bg-neutral-50`}
+        className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} antialiased bg-neutral-950`}
       >
         {children}
       </body>
