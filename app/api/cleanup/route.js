@@ -12,8 +12,8 @@ export async function GET(request) {
   }
 
   try {
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const isoDate = yesterday.toISOString().split(".")[0];
+    const oneHourAgo = new Date(Date.now() - 1 * 60 * 60 * 1000);
+    const isoDate = oneHourAgo.toISOString().split(".")[0];
 
     const searchUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/resources/search`;
     const expression = `folder:temp_conversions AND uploaded_at<${isoDate}`;
