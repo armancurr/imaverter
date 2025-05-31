@@ -16,6 +16,7 @@ import {
 import FormatSelector from "./format-selector";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export default function UploadCard({
   file,
@@ -32,14 +33,28 @@ export default function UploadCard({
   setConvertedUrl,
 }) {
   const handleFileChange = (selectedFile) => {
-    setFile(selectedFile);
     setConvertedUrl(null);
 
     if (selectedFile) {
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        toast.error("File size exceeds 10MB.", {
+          action: {
+            label: "Close",
+            onClick: () => {
+              toast.dismiss();
+            },
+          },
+        });
+        setFile(null);
+        setPreview(null);
+        return;
+      }
+      setFile(selectedFile);
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target.result);
       reader.readAsDataURL(selectedFile);
     } else {
+      setFile(null);
       setPreview(null);
     }
   };
