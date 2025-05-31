@@ -5,12 +5,12 @@ import "@/app/globals.css";
 
 export const metadata = {
   title: "Better Converter - Convert Image formats",
-  description:
-    "Convert images to any format with our easy-to-use online converter.",
   icons: {
-    icon: "/images/converted.ico",
-    shortcut: "/images/converted.ico",
+    icon: "/images/converted.png",
+    shortcut: "/images/converted.png",
   },
+  description:
+    "Convert images to any format with our easy-to-use online converter.",  
 };
 
 export default function RootLayout({ children }) {
