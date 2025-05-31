@@ -1,4 +1,5 @@
 "use client";
+import React, { useEffect } from "react";
 import {
   DownloadSimple,
   ImageSquare,
@@ -15,8 +16,22 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export default function ResultCard({ convertedUrl, format, downloadImage }) {
+  useEffect(() => {
+    if (convertedUrl) {
+      toast.success("Image processed. Download it now.", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
+    }
+  }, [convertedUrl]);
+
   return (
     <Card className="flex flex-col border-none bg-neutral-900/90 lg:h-full">
       <CardHeader className="pb-2 flex-shrink-0">
