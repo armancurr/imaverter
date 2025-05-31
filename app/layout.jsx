@@ -4,12 +4,13 @@ import { Toaster } from "sonner";
 import "@/app/globals.css";
 
 export const metadata = {
-  title: "Better Converter - Convert Images formats",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "Better Converter - Convert Image formats",
   description:
     "Convert images to any format with our easy-to-use online converter.",
+  icons: {
+    icon: "/images/converted.ico",
+    shortcut: "/images/converted.ico",
+  },
 };
 
 export default function RootLayout({ children }) {
