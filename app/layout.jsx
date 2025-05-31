@@ -22,7 +22,6 @@ export default function RootLayout({ children }) {
           position="top-right"
           richColors={true}
           duration={4000}
-          closeButton
           theme="dark"
         />
       </body>
