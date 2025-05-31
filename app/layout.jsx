@@ -1,5 +1,6 @@
 import { ReactScan } from "@/lib/react-scan";
 import { funnelSans } from "@/app/fonts";
+import { Toaster } from "sonner";
 import "@/app/globals.css";
 
 export const metadata = {
@@ -17,6 +18,13 @@ export default function RootLayout({ children }) {
       <ReactScan />
       <body className={`${funnelSans.variable} antialiased bg-neutral-950`}>
         {children}
+        <Toaster
+          position="top-right"
+          richColors={true}
+          duration={4000}
+          closeButton
+          theme="dark"
+        />
       </body>
     </html>
   );
