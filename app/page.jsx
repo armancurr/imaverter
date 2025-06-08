@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import Header from "@/components/layout/header";
 import UploadCard from "@/components/layout/upload-card";
 import ResultCard from "@/components/layout/result-card";
@@ -71,34 +70,15 @@ export default function Home() {
     document.body.removeChild(a);
   };
 
-  const fadeInBlur = {
-    initial: {
-      opacity: 0,
-      filter: "blur(10px)",
-    },
-    animate: {
-      opacity: 1,
-      filter: "blur(0px)",
-    },
-  };
-
   return (
-    <motion.div
-      className="min-h-screen bg-neutral-950 text-neutral-300"
-      initial="initial"
-      animate="animate"
-    >
-      <motion.div variants={fadeInBlur} transition={{ duration: 0.3 }}>
+    <div className="min-h-screen bg-neutral-950 text-neutral-300">
+      <div>
         <Header />
-      </motion.div>
+      </div>
 
-      <motion.div
-        className="container mx-auto px-6 py-2"
-        variants={fadeInBlur}
-        transition={{ duration: 0.3 }}
-      >
+      <div className="container mx-auto px-6 py-2">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:h-[calc(100vh-170px)]">
-          <motion.div variants={fadeInBlur} transition={{ duration: 0.3 }}>
+          <div>
             <UploadCard
               file={file}
               setFile={setFile}
@@ -113,17 +93,17 @@ export default function Home() {
               setPreview={setPreview}
               setConvertedUrl={setConvertedUrl}
             />
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeInBlur} transition={{ duration: 0.3 }}>
+          <div>
             <ResultCard
               convertedUrl={convertedUrl}
               format={format}
               downloadImage={downloadImage}
             />
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

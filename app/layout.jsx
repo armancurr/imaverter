@@ -10,7 +10,7 @@ export const metadata = {
     shortcut: "/favicon-modified.png",
   },
   description:
-    "Convert images to any format with our easy-to-use online converter.",  
+    "Convert images to any format with our easy-to-use online converter.",
 };
 
 export default function RootLayout({ children }) {
