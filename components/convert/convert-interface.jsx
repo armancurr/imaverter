@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/layout/header";
-import UploadCard from "@/components/layout/upload-card";
-import ResultCard from "@/components/layout/result-card";
+import UploadCard from "@/components/shared/upload-card";
+import ResultCard from "@/components/shared/result-card";
+import FormatSelector from "./format-selector";
 
-export default function Home() {
+export default function ConvertInterface() {
   const [file, setFile] = useState(null);
   const [format, setFormat] = useState("jpg");
   const [convertedUrl, setConvertedUrl] = useState(null);
@@ -71,38 +71,41 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-300">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:h-[calc(100vh-170px)]">
       <div>
-        <Header />
+        <UploadCard
+          file={file}
+          setFile={setFile}
+          preview={preview}
+          dragActive={dragActive}
+          setDragActive={setDragActive}
+          setPreview={setPreview}
+          loading={loading}
+          onSubmit={handleSubmit}
+          onClearResult={() => setConvertedUrl(null)}
+          title="Upload Image"
+          description="Select an image to convert to your desired format"
+          buttonText={`Convert to ${format.toUpperCase()}`}
+          acceptedFormats="PNG, JPG, WEBP up to 10MB"
+        >
+          <FormatSelector
+            format={format}
+            setFormat={setFormat}
+            formatOptions={formatOptions}
+          />
+        </UploadCard>
       </div>
 
-      <div className="container mx-auto px-6 py-2">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:h-[calc(100vh-170px)]">
-          <div>
-            <UploadCard
-              file={file}
-              setFile={setFile}
-              format={format}
-              setFormat={setFormat}
-              formatOptions={formatOptions}
-              loading={loading}
-              handleSubmit={handleSubmit}
-              preview={preview}
-              dragActive={dragActive}
-              setDragActive={setDragActive}
-              setPreview={setPreview}
-              setConvertedUrl={setConvertedUrl}
-            />
-          </div>
-
-          <div>
-            <ResultCard
-              convertedUrl={convertedUrl}
-              format={format}
-              downloadImage={downloadImage}
-            />
-          </div>
-        </div>
+      <div>
+        <ResultCard
+          resultUrl={convertedUrl}
+          resultFormat={format}
+          onDownload={downloadImage}
+          title="Converted Image"
+          successLabel="Converted"
+          noResultMessage="No converted image yet"
+          noResultSubMessage="Upload and convert an image to see it here"
+        />
       </div>
     </div>
   );

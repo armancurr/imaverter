@@ -1,5 +1,6 @@
 "use client";
 
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
 function GithubSVG({ className = "h-5 w-5" }) {
@@ -29,29 +30,40 @@ function GithubSVG({ className = "h-5 w-5" }) {
   );
 }
 
-export default function Header() {
+export default function Header({ activeTab, setActiveTab }) {
+  const tabs = [
+    { id: "convert", label: "Convert" },
+    { id: "crop", label: "Crop" },
+    { id: "compress", label: "Compress" },
+  ];
+
   return (
     <div className="bg-transparent">
       <div className="container mx-auto flex flex-col items-center justify-center px-6 py-6">
-        <Button
-          variant="secondary"
-          className="flex items-center gap-2 bg-neutral-900 text-neutral-300 hover:bg-neutral-800 transition-colors duration-200 mb-2"
-          asChild
+        {/* Tab Navigation */}
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full flex justify-center"
         >
-          <a
-            href="https://github.com/armancurr/file-converter"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <GithubSVG className="h-5 w-5" />
-            Source Code
-          </a>
-        </Button>
-        <p className="text-xs text-neutral-400 text-center max-w-md">
-          If you find this tool helpful, please consider starring the GitHub
-          repo to keep it open source! Your support helps us improve the tool
-          for everyone.
-        </p>
+          <TabsList className="bg-neutral-900/50 rounded-lg p-1 flex">
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200
+                  ${
+                    activeTab === tab.id
+                      ? "bg-[#e6fda3]/20 text-[#e6fda3] shadow-sm"
+                      : "text-neutral-400 hover:text-neutral-300 hover:bg-neutral-800/50"
+                  }
+                `}
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );
