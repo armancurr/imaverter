@@ -4,26 +4,25 @@ import { Toaster } from "sonner";
 import "@/app/globals.css";
 
 export const metadata = {
-  title: "Better Converter - Convert Image formats",
+  title: "Imaverter - Image Processing Tool",
   icons: {
-    icon: "/favicon-modified.png",
-    shortcut: "/favicon-modified.png",
+    icon: "/imaverter.png",
+    shortcut: "/imaverter.png",
   },
-  description:
-    "Convert images to any format with our easy-to-use online converter.",
+  description: "Image Processing Tool",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ReactScan />
-      <body className={`${funnelSans.variable} antialiased bg-neutral-950`}>
+      <body className={`${funnelSans.variable} antialiased bg-[#FAF0E6]`}>
         {children}
         <Toaster
           position="top-right"
           richColors={true}
           duration={4000}
-          theme="dark"
+          theme="light"
         />
       </body>
     </html>

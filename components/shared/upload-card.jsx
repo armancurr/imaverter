@@ -94,30 +94,44 @@ export default function UploadCard({
   };
 
   return (
-    <Card className="flex flex-col border-none bg-neutral-900/90 lg:h-full">
-      <CardHeader className="pb-2 flex-shrink-0">
-        <CardTitle className="flex items-center space-x-2 text-neutral-200">
+    <Card
+      className="flex flex-col border shadow-lg h-full"
+      style={{
+        backgroundColor: "#FFFFFF",
+        borderColor: "#B9B4C7",
+      }}
+    >
+      <CardHeader className="pb-4 flex-shrink-0">
+        <CardTitle
+          className="flex items-center space-x-2"
+          style={{ color: "#352F44" }}
+        >
           <UploadSimple className="h-5 w-5" />
           <span>{title}</span>
         </CardTitle>
-        <CardDescription className="text-neutral-400">
+        <CardDescription style={{ color: "#5C5470" }}>
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col h-full">
-        <div className="mb-auto">
+      <CardContent className="flex flex-col flex-1 p-6">
+        {/* Main content area - takes up available space */}
+        <div className="flex-1 flex flex-col">
           {/* Use custom content if provided, otherwise use default upload area */}
           {customContent ? (
-            customContent
+            <div className="flex-1 flex flex-col">{customContent}</div>
           ) : (
             <div
-              className={`rounded-md border-2 border-dashed p-6 sm:p-8 text-center transition-all duration-200 h-[280px] flex items-center justify-center ${
+              className={`flex-1 min-h-[320px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center ${
                 dragActive
-                  ? "border-[#e6fda3] bg-[#e6fda3]/5"
+                  ? "shadow-lg scale-[1.02]"
                   : file
-                    ? "border-[#e6fda3] bg-[#e6fda3]/5"
-                    : "border-neutral-700 hover:border-neutral-600"
+                    ? "shadow-md"
+                    : "hover:shadow-md"
               }`}
+              style={{
+                borderColor: dragActive || file ? "#5C5470" : "#B9B4C7",
+                backgroundColor: dragActive || file ? "#FAF0E6" : "#FFFFFF",
+              }}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
@@ -133,26 +147,32 @@ export default function UploadCard({
 
               <label
                 htmlFor="file-upload-shared"
-                className="block cursor-pointer"
+                className="block cursor-pointer w-full h-full flex items-center justify-center"
               >
                 {preview ? (
-                  <div className="space-y-3">
+                  <div className="space-y-3 w-full">
                     <Image
                       src={preview}
                       alt="Preview"
-                      className="mx-auto rounded-md object-contain max-h-[240px] max-w-full"
+                      className="mx-auto rounded-md object-contain max-h-[280px] max-w-full"
                       width={400}
                       height={400}
                     />
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <FileImage className="mx-auto h-10 w-10 text-neutral-500" />
+                    <FileImage
+                      className="mx-auto h-12 w-12"
+                      style={{ color: "#5C5470" }}
+                    />
                     <div>
-                      <p className="font-medium text-neutral-300">
+                      <p
+                        className="font-medium text-lg"
+                        style={{ color: "#352F44" }}
+                      >
                         Click to upload or drag and drop
                       </p>
-                      <p className="mt-1 text-sm text-neutral-500">
+                      <p className="mt-2 text-sm" style={{ color: "#5C5470" }}>
                         {acceptedFormats}
                       </p>
                     </div>
@@ -163,7 +183,8 @@ export default function UploadCard({
           )}
         </div>
 
-        <div className="space-y-3 mt-6">
+        {/* Controls section - fixed at bottom */}
+        <div className="space-y-4 mt-6 flex-shrink-0">
           {/* Render any additional controls passed as children */}
           {children}
 
@@ -172,7 +193,11 @@ export default function UploadCard({
             <Button
               onClick={onSubmit}
               disabled={!file || loading}
-              className="w-full bg-neutral-700 py-6 mt-2 text-neutral-200 hover:bg-neutral-700/70 transition-colors duration-200 cursor-pointer"
+              className="w-full py-6 transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:shadow-lg disabled:hover:scale-100 disabled:hover:shadow-none"
+              style={{
+                backgroundColor: !file || loading ? "#B9B4C7" : "#5C5470",
+                color: "#FAF0E6",
+              }}
               size="lg"
             >
               {loading ? (

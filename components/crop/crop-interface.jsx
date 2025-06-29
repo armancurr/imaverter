@@ -104,7 +104,10 @@ export default function CropInterface() {
 
   // Custom cropper area that replaces the standard upload area when image is loaded
   const cropperArea = preview ? (
-    <div className="h-[280px] relative bg-neutral-800 rounded-md overflow-hidden">
+    <div
+      className="flex-1 relative rounded-md overflow-hidden min-h-[320px]"
+      style={{ backgroundColor: "#B9B4C7" }}
+    >
       <Cropper
         image={preview}
         crop={crop}
@@ -119,76 +122,98 @@ export default function CropInterface() {
   ) : null;
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:h-[calc(100vh-170px)]">
-      <div>
-        <UploadCard
-          file={file}
-          setFile={setFile}
-          preview={preview}
-          dragActive={dragActive}
-          setDragActive={setDragActive}
-          setPreview={setPreview}
-          loading={loading}
-          onSubmit={createCroppedImage}
-          onClearResult={() => setCroppedImage(null)}
-          title="Crop Image"
-          description="Upload an image and crop it with custom corner radius"
-          buttonText="Crop Image"
-          acceptedFormats="PNG, JPG, WEBP up to 10MB"
-          customContent={cropperArea}
-        >
-          {/* Crop controls - only show when image is loaded */}
-          {preview && (
-            <div className="space-y-3">
-              <div className="space-y-2">
-                <Label className="text-sm text-neutral-300">
-                  Corner Radius:{" "}
-                  {cornerRadius >= 100 ? "Circle" : `${cornerRadius}px`}
-                </Label>
-                <Input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={cornerRadius}
-                  onChange={(e) => setCornerRadius(Number(e.target.value))}
-                  className="w-full"
-                />
-                <p className="text-xs text-neutral-500">
-                  Drag to 100 for perfect circle
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm text-neutral-300">
-                  Zoom: {zoom.toFixed(2)}
-                </Label>
-                <Input
-                  type="range"
-                  min="1"
-                  max="3"
-                  step="0.1"
-                  value={zoom}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          )}
-        </UploadCard>
+    <div className="h-[calc(100vh-8rem)] flex flex-col">
+      {/* Header */}
+      <div className="flex items-center space-x-3 mb-6 px-1">
+        <div>
+          <h1 className="text-2xl font-bold" style={{ color: "#352F44" }}>
+            Crop Image
+          </h1>
+          <p className="text-sm" style={{ color: "#5C5470" }}>
+            Upload and crop images with custom corner radius or create perfect
+            circles
+          </p>
+        </div>
       </div>
 
-      <div>
-        <ResultCard
-          resultUrl={croppedImage}
-          resultFormat="png"
-          onDownload={downloadCroppedImage}
-          title="Cropped Result"
-          successLabel="Cropped"
-          noResultMessage="No cropped image yet"
-          noResultSubMessage="Upload and crop an image to see it here"
-          downloadButtonText="Download Cropped Image"
-          toastMessage="Image cropped successfully!"
-        />
+      {/* Main content */}
+      <div className="flex-1 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="h-full">
+          <UploadCard
+            file={file}
+            setFile={setFile}
+            preview={preview}
+            dragActive={dragActive}
+            setDragActive={setDragActive}
+            setPreview={setPreview}
+            loading={loading}
+            onSubmit={createCroppedImage}
+            onClearResult={() => setCroppedImage(null)}
+            title="Crop Image"
+            description="Upload an image and crop it with custom corner radius"
+            buttonText="Crop Image"
+            acceptedFormats="PNG, JPG, WEBP up to 10MB"
+            customContent={cropperArea}
+          >
+            {/* Crop controls - only show when image is loaded */}
+            {preview && (
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-sm" style={{ color: "#352F44" }}>
+                    Corner Radius:{" "}
+                    {cornerRadius >= 100 ? "Circle" : `${cornerRadius}px`}
+                  </Label>
+                  <Input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={cornerRadius}
+                    onChange={(e) => setCornerRadius(Number(e.target.value))}
+                    className="w-full"
+                    style={{
+                      accentColor: "#5C5470",
+                    }}
+                  />
+                  <p className="text-xs" style={{ color: "#5C5470" }}>
+                    Drag to 100 for perfect circle
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm" style={{ color: "#352F44" }}>
+                    Zoom: {zoom.toFixed(2)}
+                  </Label>
+                  <Input
+                    type="range"
+                    min="1"
+                    max="3"
+                    step="0.1"
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full"
+                    style={{
+                      accentColor: "#5C5470",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </UploadCard>
+        </div>
+
+        <div className="h-full">
+          <ResultCard
+            resultUrl={croppedImage}
+            resultFormat="png"
+            onDownload={downloadCroppedImage}
+            title="Cropped Result"
+            successLabel="Cropped"
+            noResultMessage="No cropped image yet"
+            noResultSubMessage="Upload and crop an image to see it here"
+            downloadButtonText="Download Cropped Image"
+            toastMessage="Image cropped successfully!"
+          />
+        </div>
       </div>
     </div>
   );

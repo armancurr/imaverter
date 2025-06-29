@@ -84,41 +84,61 @@ export default function ResultCard({
   }, [resultUrl, showToast, toastMessage]);
 
   return (
-    <Card className="flex flex-col border-none bg-neutral-900/90 lg:h-full">
-      <CardHeader className="pb-2 flex-shrink-0">
-        <CardTitle className="flex items-center space-x-2 text-neutral-200">
+    <Card
+      className="flex flex-col border shadow-lg h-full"
+      style={{
+        backgroundColor: "#FFFFFF",
+        borderColor: "#B9B4C7",
+      }}
+    >
+      <CardHeader className="pb-4 flex-shrink-0">
+        <CardTitle
+          className="flex items-center space-x-2"
+          style={{ color: "#352F44" }}
+        >
           <DownloadSimple className="h-5 w-5" />
           <span>{title}</span>
         </CardTitle>
-        <CardDescription className="text-sm text-neutral-400">
+        <CardDescription className="text-sm" style={{ color: "#5C5470" }}>
           {finalDescription}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col h-full">
-        <div className="mb-auto">
+      <CardContent className="flex flex-col flex-1 p-6">
+        {/* Main content area - takes up available space */}
+        <div className="flex-1 flex flex-col">
           <div
-            className={`rounded-md border-2 p-6 sm:p-8 text-center transition-all duration-200 h-[280px] flex items-center justify-center ${
-              resultUrl ? "border-[#e6fda3]/5 bg-[#e6fda3]/5" : "border-none"
+            className={`flex-1 min-h-[320px] rounded-lg border-2 p-6 text-center transition-all duration-200 flex items-center justify-center ${
+              resultUrl ? "shadow-md" : ""
             }`}
+            style={{
+              borderColor: resultUrl ? "#5C5470" : "#B9B4C7",
+              backgroundColor: resultUrl ? "#FAF0E6" : "#FFFFFF",
+            }}
           >
             {resultUrl ? (
-              <div className="space-y-3">
+              <div className="space-y-3 w-full">
                 <Image
                   src={resultUrl}
                   alt="Processed result"
-                  className="mx-auto rounded-md object-contain max-h-[240px] max-w-full"
+                  className="mx-auto rounded-md object-contain max-h-[280px] max-w-full"
                   width={400}
                   height={400}
                 />
               </div>
             ) : (
               <div className="space-y-3">
-                <ImageSquare className="mx-auto h-10 w-10 text-neutral-500" />
+                <ImageSquare
+                  className="mx-auto h-12 w-12"
+                  style={{ color: "#5C5470" }}
+                />
                 <div>
-                  <p className="font-medium text-neutral-300">
+                  <p
+                    className="font-medium text-lg"
+                    style={{ color: "#352F44" }}
+                  >
                     {noResultMessage}
                   </p>
-                  <p className="mt-1 text-sm text-neutral-500">
+                  <p className="mt-2 text-sm" style={{ color: "#5C5470" }}>
                     {noResultSubMessage}
                   </p>
                 </div>
@@ -127,16 +147,24 @@ export default function ResultCard({
           </div>
         </div>
 
-        <div className="space-y-3 mt-6">
+        {/* Status and download section - fixed at bottom */}
+        <div className="space-y-4 mt-6 flex-shrink-0">
           {resultUrl && resultFormat && (
             <div className="space-y-1">
               <div className="flex items-center space-x-1">
-                <CheckCircle weight="bold" className="h-4 w-4 text-[#e6fda3]" />
-                <Label className="text-sm font-medium text-neutral-200">
+                <CheckCircle
+                  weight="bold"
+                  className="h-4 w-4"
+                  style={{ color: "#5C5470" }}
+                />
+                <Label
+                  className="text-sm font-medium"
+                  style={{ color: "#352F44" }}
+                >
                   {successLabel}
                 </Label>
               </div>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs" style={{ color: "#5C5470" }}>
                 Image processed in {resultFormat.toUpperCase()} format
               </p>
             </div>
@@ -144,20 +172,30 @@ export default function ResultCard({
 
           {/* File size information - show when we have compressed size data */}
           {resultUrl && compressedSize > 0 && (
-            <div className="bg-neutral-800/50 rounded-md p-3">
+            <div
+              className="rounded-md p-3"
+              style={{ backgroundColor: "#FAF0E6" }}
+            >
               <div className="flex items-center space-x-1 mb-2">
-                <Info weight="bold" className="h-4 w-4 text-[#e6fda3]" />
-                <Label className="text-sm font-medium text-neutral-200">
+                <Info
+                  weight="bold"
+                  className="h-4 w-4"
+                  style={{ color: "#5C5470" }}
+                />
+                <Label
+                  className="text-sm font-medium"
+                  style={{ color: "#352F44" }}
+                >
                   File Information
                 </Label>
               </div>
-              <div className="text-xs text-neutral-400 space-y-1">
+              <div className="text-xs space-y-1" style={{ color: "#5C5470" }}>
                 {originalSize > 0 && (
                   <div>Original size: {formatFileSize(originalSize)}</div>
                 )}
                 <div>Compressed size: {formatFileSize(compressedSize)}</div>
                 {compressionRatio > 0 && (
-                  <div className="text-[#e6fda3]">
+                  <div style={{ color: "#352F44" }}>
                     Size reduction: {compressionRatio.toFixed(1)}%
                   </div>
                 )}
@@ -168,7 +206,11 @@ export default function ResultCard({
           <Button
             onClick={onDownload}
             disabled={!resultUrl}
-            className="w-full py-6 mt-2 bg-neutral-700 hover:bg-neutral-700/70 cursor-pointer transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-6 transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:shadow-lg disabled:hover:scale-100 disabled:hover:shadow-none"
+            style={{
+              backgroundColor: !resultUrl ? "#B9B4C7" : "#5C5470",
+              color: "#FAF0E6",
+            }}
             size="lg"
           >
             {finalDownloadButtonText}
