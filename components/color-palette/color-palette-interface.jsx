@@ -2,13 +2,16 @@
 
 import { useState, useCallback } from "react";
 import UploadCard from "@/components/shared/upload-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import ResultCard from "@/components/shared/result-card";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import Color from "colorjs.io";
 import { toast } from "sonner";
 import { Palette } from "@phosphor-icons/react";
 
-// Simple k-means for small datasets
 function kmeans(data, k, maxIter = 20) {
   const centroids = [];
   const used = new Set();
@@ -26,7 +29,7 @@ function kmeans(data, k, maxIter = 20) {
       let minIdx = 0;
       centroids.forEach((centroid, i) => {
         const dist = Math.sqrt(
-          centroid.reduce((sum, c, j) => sum + (c - point[j]) ** 2, 0)
+          centroid.reduce((sum, c, j) => sum + (c - point[j]) ** 2, 0),
         );
         if (dist < minDist) {
           minDist = dist;
@@ -52,7 +55,7 @@ function kmeans(data, k, maxIter = 20) {
     }
     if (
       centroids.every((c, i) =>
-        c.every((v, j) => Math.abs(v - newCentroids[i][j]) < 1e-2)
+        c.every((v, j) => Math.abs(v - newCentroids[i][j]) < 1e-2),
       )
     ) {
       break;
@@ -114,7 +117,7 @@ export default function ColorPaletteInterface() {
       }
       const labPixels = pixels.map(
         ([r, g, b]) =>
-          new Color("srgb", [r / 255, g / 255, b / 255]).to("lab").coords
+          new Color("srgb", [r / 255, g / 255, b / 255]).to("lab").coords,
       );
       const { centroids, assignments } = kmeans(labPixels, numColors);
       const clusterCounts = Array(numColors).fill(0);
@@ -142,7 +145,6 @@ export default function ColorPaletteInterface() {
     setPalette([]);
   };
 
-  // Copy all hex codes
   const handleCopyAll = () => {
     if (palette.length === 0) return;
     const allHex = palette.map((swatch) => swatch.hex).join(", ");
@@ -150,7 +152,6 @@ export default function ColorPaletteInterface() {
     toast.success("All hex codes copied!");
   };
 
-  // Copy individual hex code
   const handleCopyHex = (hex) => {
     navigator.clipboard.writeText(hex);
     toast.success(`${hex} copied!`);
@@ -158,15 +159,14 @@ export default function ColorPaletteInterface() {
 
   return (
     <div className="h-[calc(100vh-8rem)] flex flex-col">
-      {/* Header */}
       <div className="flex items-center space-x-3 mb-6 px-1">
-        <Palette size={32} style={{ color: "#352F44" }} />
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "#352F44" }}>
             Color Palette Extractor
           </h1>
           <p className="text-sm" style={{ color: "#5C5470" }}>
-            Extract dominant colors from your image using k-means clustering in Lab color space.
+            Extract dominant colors from your image using k-means clustering in
+            Lab color space.
           </p>
         </div>
       </div>
@@ -223,96 +223,61 @@ export default function ColorPaletteInterface() {
 
         {/* Palette result */}
         <div className="h-full">
-          <Card
-            className="flex flex-col border shadow-lg h-full"
-            style={{
-              backgroundColor: "#FFFFFF",
-              borderColor: "#B9B4C7",
-            }}
-          >
-            <CardHeader className="pb-4 flex-shrink-0">
-              <CardTitle
-                className="flex items-center space-x-2"
-                style={{ color: "#352F44" }}
-              >
-                <Palette className="h-5 w-5" />
-                <span>Extracted Palette</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col flex-1 p-6">
-              <div className="flex-1 flex flex-col items-center justify-center">
-                {palette.length > 0 ? (
-                  <div className="flex flex-wrap gap-4 justify-center">
-                    {palette.map((swatch, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-col items-center cursor-pointer group"
-                        style={{ minWidth: 72 }}
-                        onClick={() => handleCopyHex(swatch.hex)}
-                        title={`Copy ${swatch.hex}`}
-                      >
+          <ResultCard
+            resultUrl={palette.length > 0 ? "palette-extracted" : null}
+            resultFormat="palette"
+            onDownload={handleCopyAll}
+            title="Extracted Palette"
+            description={
+              palette.length > 0
+                ? `${palette.length} colors extracted from your image`
+                : "Color palette will appear here"
+            }
+            successLabel="Extracted"
+            noResultMessage="No palette yet"
+            noResultSubMessage="Upload and extract a palette to see it here"
+            downloadButtonText="Copy All Hex Codes"
+            toastMessage="Palette extracted successfully!"
+            showToast={false}
+            customIcon={<Palette className="h-5 w-5" />}
+            customContent={
+              palette.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center max-w-md mx-auto">
+                  {palette.map((swatch, i) => (
+                    <Tooltip key={i}>
+                      <TooltipTrigger asChild>
                         <div
-                          style={{
-                            width: 48,
-                            height: 48,
-                            background: swatch.hex,
-                            borderRadius: 8,
-                            border: "1px solid #ccc",
-                            transition: "box-shadow 0.2s",
-                          }}
-                          className="group-hover:shadow-lg"
-                        />
-                        <span
-                          className="text-xs mt-1"
-                          style={{ color: "#352F44" }}
+                          className="flex flex-col items-center cursor-pointer group"
+                          onClick={() => handleCopyHex(swatch.hex)}
                         >
-                          {swatch.hex}
-                        </span>
-                        <span
-                          className="text-xs"
-                          style={{ color: "#5C5470" }}
-                        >
-                          {swatch.percent}%
-                        </span>
-                        <span className="text-[10px] text-[#5C5470] opacity-0 group-hover:opacity-100 transition-opacity">
-                          Click to copy
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <Palette
-                      className="mx-auto h-12 w-12"
-                      style={{ color: "#5C5470" }}
-                    />
-                    <p
-                      className="font-medium text-lg mt-2"
-                      style={{ color: "#352F44" }}
-                    >
-                      No palette yet
-                    </p>
-                    <p className="mt-2 text-sm" style={{ color: "#5C5470" }}>
-                      Upload and extract a palette to see it here
-                    </p>
-                  </div>
-                )}
-              </div>
-              {/* Copy all hex codes */}
-              {palette.length > 0 && (
-                <Button
-                  className="w-full mt-6"
-                  style={{
-                    backgroundColor: "#5C5470",
-                    color: "#FAF0E6",
-                  }}
-                  onClick={handleCopyAll}
-                >
-                  Copy All Hex Codes
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+                          <div
+                            style={{
+                              width: 56,
+                              height: 56,
+                              background: swatch.hex,
+                              borderRadius: 8,
+                              border: "1px solid #ccc",
+                              transition: "box-shadow 0.2s",
+                            }}
+                            className="group-hover:shadow-lg"
+                          />
+                          <span
+                            className="text-xs mt-2"
+                            style={{ color: "#5C5470" }}
+                          >
+                            {swatch.percent}%
+                          </span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{swatch.hex}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
+              ) : null
+            }
+          />
         </div>
       </div>
     </div>

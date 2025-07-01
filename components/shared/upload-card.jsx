@@ -19,33 +19,23 @@ import Image from "next/image";
 import { toast } from "sonner";
 
 export default function UploadCard({
-  // File handling
   file,
   setFile,
   preview,
   dragActive,
   setDragActive,
   setPreview,
-
-  // Action handling
   loading,
   onSubmit,
   onClearResult,
-
-  // UI customization
   title = "Upload Image",
   description = "Select an image to process",
   buttonText = "Process Image",
   acceptedFormats = "PNG, JPG, WEBP up to 10MB",
-
-  // Additional controls (optional)
   children,
-
-  // Custom content to replace upload area (for cropper)
   customContent,
 }) {
   const handleFileChange = (selectedFile) => {
-    // Clear previous results when new file is selected
     if (onClearResult) {
       onClearResult();
     }
@@ -114,9 +104,7 @@ export default function UploadCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col flex-1 p-6">
-        {/* Main content area - takes up available space */}
         <div className="flex-1 flex flex-col">
-          {/* Use custom content if provided, otherwise use default upload area */}
           {customContent ? (
             <div className="flex-1 flex flex-col">{customContent}</div>
           ) : (
@@ -183,12 +171,8 @@ export default function UploadCard({
           )}
         </div>
 
-        {/* Controls section - fixed at bottom */}
         <div className="space-y-4 mt-6 flex-shrink-0">
-          {/* Render any additional controls passed as children */}
           {children}
-
-          {/* Submit button */}
           {onSubmit && (
             <Button
               onClick={onSubmit}

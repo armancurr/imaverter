@@ -21,47 +21,35 @@ import Image from "next/image";
 import { toast } from "sonner";
 
 export default function ResultCard({
-  // Result data
   resultUrl,
   resultFormat,
-
-  // File size information
   originalSize,
   compressedSize,
   compressionRatio,
-
-  // Actions
   onDownload,
-
-  // UI customization
   title = "Processed Image",
   description,
   downloadButtonText,
   successLabel = "Processed",
-
-  // Status messages
   noResultMessage = "No processed image yet",
   noResultSubMessage = "Upload and process an image to see it here",
-
-  // Toast notification
   showToast = true,
   toastMessage = "Image processed. Download it now.",
+  customContent = null,
+  customIcon = null,
 }) {
-  // Auto-generate description if not provided
   const finalDescription =
     description ||
     (resultUrl
       ? "Your processed image is ready for download"
       : "Processed image will appear here");
 
-  // Auto-generate download button text if not provided
   const finalDownloadButtonText =
     downloadButtonText ||
     (resultFormat
       ? `Download ${resultFormat.toUpperCase()}`
       : "Download Image");
 
-  // Helper function to format file size
   const formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -96,7 +84,7 @@ export default function ResultCard({
           className="flex items-center space-x-2"
           style={{ color: "#352F44" }}
         >
-          <DownloadSimple className="h-5 w-5" />
+          {customIcon || <DownloadSimple className="h-5 w-5" />}
           <span>{title}</span>
         </CardTitle>
         <CardDescription className="text-sm" style={{ color: "#5C5470" }}>
@@ -116,15 +104,19 @@ export default function ResultCard({
             }}
           >
             {resultUrl ? (
-              <div className="space-y-3 w-full">
-                <Image
-                  src={resultUrl}
-                  alt="Processed result"
-                  className="mx-auto rounded-md object-contain max-h-[280px] max-w-full"
-                  width={400}
-                  height={400}
-                />
-              </div>
+              customContent ? (
+                <div className="space-y-3 w-full">{customContent}</div>
+              ) : (
+                <div className="space-y-3 w-full">
+                  <Image
+                    src={resultUrl}
+                    alt="Processed result"
+                    className="mx-auto rounded-md object-contain max-h-[280px] max-w-full"
+                    width={400}
+                    height={400}
+                  />
+                </div>
+              )
             ) : (
               <div className="space-y-3">
                 <ImageSquare

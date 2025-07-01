@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowsClockwise, Crop, Archive, Palette } from "@phosphor-icons/react"; // <-- Add Palette icon
+import { ArrowsClockwise, Crop, Archive, Palette } from "@phosphor-icons/react";
 
 export default function Sidebar({ activeTab, setActiveTab }) {
   const tabs = [
@@ -26,7 +26,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     {
       id: "color-palette",
       label: "Color-Palette",
-      icon: Palette, // <-- Use the Palette icon
+      icon: Palette,
       description: "Extract color palette from images",
     },
   ];
@@ -52,7 +52,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                 backgroundColor: isActive ? "#FAF0E6" : "#5C5470",
                 color: isActive ? "#352F44" : "#FAF0E6",
               }}
-              title={tab.label} // Optional: show label on hover
+              title={tab.label}
             >
               <Icon size={20} />
             </Button>
