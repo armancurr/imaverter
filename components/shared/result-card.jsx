@@ -5,7 +5,6 @@ import {
   DownloadSimple,
   ImageSquare,
   ArrowLineDown,
-  CheckCircle,
   Info,
 } from "@phosphor-icons/react";
 import {
@@ -30,9 +29,8 @@ export default function ResultCard({
   title = "Processed Image",
   description,
   downloadButtonText,
-  successLabel = "Processed",
-  noResultMessage = "No processed image yet",
-  noResultSubMessage = "Upload and process an image to see it here",
+  noResultMessage = "No converted image yet",
+  noResultSubMessage = "Upload and convert an image to see it here",
   showToast = true,
   toastMessage = "Image processed. Download it now.",
   customContent = null,
@@ -72,7 +70,7 @@ export default function ResultCard({
   }, [resultUrl, showToast, toastMessage]);
 
   return (
-    <Card className="flex flex-col border shadow-lg h-full bg-neutral-900 border-neutral-800">
+    <Card className="flex flex-col border shadow-lg h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden">
       <CardHeader className="pb-4 flex-shrink-0">
         <CardTitle className="flex items-center space-x-2 text-neutral-100">
           {customIcon || <DownloadSimple className="h-5 w-5" />}
@@ -82,38 +80,35 @@ export default function ResultCard({
           {finalDescription}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col flex-1 p-6">
+      <CardContent className="flex flex-col flex-1 p-6 min-h-0">
         {/* Main content area - takes up available space */}
-        <div className="flex-1 flex flex-col">
-          <div
-            className={`flex-1 min-h-[320px] rounded-lg border-2 p-6 text-center transition-all duration-200 flex items-center justify-center ${
-              resultUrl
-                ? "shadow-md border-neutral-600 bg-neutral-800"
-                : "border-neutral-700 bg-neutral-900"
-            }`}
-          >
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 relative rounded-md overflow-hidden min-h-[280px] flex items-center justify-center">
             {resultUrl ? (
               customContent ? (
-                <div className="space-y-3 w-full">{customContent}</div>
+                <div className="w-full h-full overflow-y-auto">
+                  {customContent}
+                </div>
               ) : (
-                <div className="space-y-3 w-full">
+                <div className="w-full h-full flex items-center justify-center">
                   <Image
                     src={resultUrl}
                     alt="Processed result"
-                    className="mx-auto rounded-md object-contain max-h-[280px] max-w-full"
-                    width={400}
-                    height={400}
+                    className="max-w-full max-h-full object-contain"
+                    width={500}
+                    height={500}
+                    unoptimized
                   />
                 </div>
               )
             ) : (
-              <div className="space-y-3">
-                <ImageSquare className="mx-auto h-12 w-12 text-neutral-500" />
+              <div className="space-y-2 text-center">
+                <ImageSquare className="mx-auto h-10 w-10 text-neutral-500" />
                 <div>
-                  <p className="font-medium text-lg text-neutral-200">
+                  <p className="font-medium text-md text-neutral-200">
                     {noResultMessage}
                   </p>
-                  <p className="mt-2 text-sm text-neutral-400">
+                  <p className="mt-2 text-xs text-neutral-400">
                     {noResultSubMessage}
                   </p>
                 </div>
@@ -123,43 +118,39 @@ export default function ResultCard({
         </div>
 
         {/* Status and download section - fixed at bottom */}
-        <div className="space-y-4 mt-6 flex-shrink-0">
-          {resultUrl && resultFormat && (
-            <div className="space-y-1">
-              <div className="flex items-center space-x-1">
-                <CheckCircle
-                  weight="bold"
-                  className="h-4 w-4 text-neutral-400"
-                />
-                <Label className="text-sm font-medium text-neutral-200">
-                  {successLabel}
-                </Label>
-              </div>
-              <p className="text-xs text-neutral-400">
-                Image processed in {resultFormat.toUpperCase()} format
-              </p>
-            </div>
-          )}
-
+        <div className="space-y-4 mt-4 flex-shrink-0">
           {/* File size information - show when we have compressed size data */}
           {resultUrl && compressedSize > 0 && (
             <div className="rounded-md p-3 bg-neutral-800 border border-neutral-700">
-              <div className="flex items-center space-x-1 mb-2">
+              <div className="flex items-center space-x-1 mb-3">
                 <Info weight="bold" className="h-4 w-4 text-neutral-400" />
                 <Label className="text-sm font-medium text-neutral-200">
-                  File Information
+                  File Size Comparison
                 </Label>
               </div>
-              <div className="text-xs space-y-1 text-neutral-400">
-                {originalSize > 0 && (
-                  <div>Original size: {formatFileSize(originalSize)}</div>
-                )}
-                <div>Compressed size: {formatFileSize(compressedSize)}</div>
-                {compressionRatio > 0 && (
-                  <div className="text-neutral-200">
-                    Size reduction: {compressionRatio.toFixed(1)}%
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-neutral-400">Original:</span>
+                  <span className="text-xs text-neutral-200">
+                    {formatFileSize(originalSize)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-neutral-400">Compressed:</span>
+                  <span className="text-xs text-neutral-200">
+                    {formatFileSize(compressedSize)}
+                  </span>
+                </div>
+                <div className="border-t border-neutral-700 pt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-medium text-neutral-300">
+                      Reduction:
+                    </span>
+                    <span className="text-xs font-medium text-green-400">
+                      {compressionRatio.toFixed(1)}%
+                    </span>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           )}
@@ -167,7 +158,7 @@ export default function ResultCard({
           <Button
             onClick={onDownload}
             disabled={!resultUrl}
-            className="w-full py-6 transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:shadow-lg disabled:hover:scale-100 disabled:hover:shadow-none bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-800 disabled:opacity-50 text-neutral-100"
+            className="w-full py-4 cursor-pointer bg-neutral-800 text-neutral-200"
             size="lg"
           >
             {finalDownloadButtonText}

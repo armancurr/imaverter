@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowsClockwise } from "@phosphor-icons/react";
 import UploadCard from "@/components/shared/upload-card";
 import ResultCard from "@/components/shared/result-card";
 import FormatSelector from "./format-selector";
+import Image from "next/image";
 
 export default function ConvertInterface() {
   const [file, setFile] = useState(null);
@@ -19,8 +19,6 @@ export default function ConvertInterface() {
     { value: "png", label: "PNG" },
     { value: "webp", label: "WEBP" },
     { value: "avif", label: "AVIF" },
-    { value: "gif", label: "GIF" },
-    { value: "tiff", label: "TIFF" },
     { value: "bmp", label: "BMP" },
     { value: "ico", label: "ICO" },
   ];
@@ -71,22 +69,23 @@ export default function ConvertInterface() {
     document.body.removeChild(a);
   };
 
-  return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col">
-      {/* Header */}
-      <div className="flex items-center space-x-3 mb-6 px-1">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-100">Convert Image</h1>
-          <p className="text-sm text-neutral-400">
-            Convert images between different formats like JPG, PNG, WEBP, and
-            more
-          </p>
-        </div>
-      </div>
+  const previewArea = preview ? (
+    <div className="flex-1 relative rounded-md overflow-hidden min-h-[280px] flex items-center justify-center">
+      <Image
+        src={preview}
+        alt="Preview"
+        width={800}
+        height={600}
+        className="max-w-full max-h-full object-contain"
+        unoptimized
+      />
+    </div>
+  ) : null;
 
-      {/* Main content */}
-      <div className="flex-1 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="h-full">
+  return (
+    <div className="h-[calc(100vh-8rem)] flex flex-col overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 gap-3 lg:grid-cols-2 min-h-0">
+        <div className="h-full min-h-0">
           <UploadCard
             file={file}
             setFile={setFile}
@@ -101,16 +100,19 @@ export default function ConvertInterface() {
             description="Select an image to convert to your desired format"
             buttonText={`Convert to ${format.toUpperCase()}`}
             acceptedFormats="PNG, JPG, WEBP up to 10MB"
+            customContent={previewArea}
           >
-            <FormatSelector
-              format={format}
-              setFormat={setFormat}
-              formatOptions={formatOptions}
-            />
+            {preview && (
+              <FormatSelector
+                format={format}
+                setFormat={setFormat}
+                formatOptions={formatOptions}
+              />
+            )}
           </UploadCard>
         </div>
 
-        <div className="h-full">
+        <div className="h-full min-h-0">
           <ResultCard
             resultUrl={convertedUrl}
             resultFormat={format}

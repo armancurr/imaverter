@@ -2,15 +2,12 @@
 
 import { useState, useCallback } from "react";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Crop, Spinner, ArrowLineRight } from "@phosphor-icons/react";
+import { Slider } from "@/components/ui/slider";
 import UploadCard from "@/components/shared/upload-card";
 import ResultCard from "@/components/shared/result-card";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 
-// Dynamically import react-easy-crop to avoid SSR issues
 const Cropper = dynamic(() => import("react-easy-crop"), { ssr: false });
 
 export default function CropInterface() {
@@ -43,15 +40,12 @@ export default function CropInterface() {
         canvas.width = width;
         canvas.height = height;
 
-        // Handle corner radius or circle
         if (cornerRadius > 0) {
           ctx.beginPath();
           if (cornerRadius >= 100) {
-            // Create perfect circle
             const radius = Math.min(width, height) / 2;
             ctx.arc(width / 2, height / 2, radius, 0, 2 * Math.PI);
           } else {
-            // Create rounded rectangle manually for better browser support
             const r = Math.min(cornerRadius, width / 2, height / 2);
             ctx.moveTo(r, 0);
             ctx.lineTo(width - r, 0);
@@ -102,9 +96,8 @@ export default function CropInterface() {
     document.body.removeChild(a);
   };
 
-  // Custom cropper area that replaces the standard upload area when image is loaded
   const cropperArea = preview ? (
-    <div className="flex-1 relative rounded-md overflow-hidden min-h-[320px] bg-neutral-800">
+    <div className="flex-1 relative rounded-md overflow-hidden min-h-[280px]">
       <Cropper
         image={preview}
         crop={crop}
@@ -119,21 +112,9 @@ export default function CropInterface() {
   ) : null;
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col">
-      {/* Header */}
-      <div className="flex items-center space-x-3 mb-6 px-1">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-100">Crop Image</h1>
-          <p className="text-sm text-neutral-400">
-            Upload and crop images with custom corner radius or create perfect
-            circles
-          </p>
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="h-full">
+    <div className="h-[calc(100vh-8rem)] flex flex-col overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 gap-3 lg:grid-cols-2 min-h-0">
+        <div className="h-full min-h-0">
           <UploadCard
             file={file}
             setFile={setFile}
@@ -150,47 +131,59 @@ export default function CropInterface() {
             acceptedFormats="PNG, JPG, WEBP up to 10MB"
             customContent={cropperArea}
           >
-            {/* Crop controls - only show when image is loaded */}
             {preview && (
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label className="text-sm text-neutral-200">
-                    Corner Radius:{" "}
-                    {cornerRadius >= 100 ? "Circle" : `${cornerRadius}px`}
-                  </Label>
-                  <Input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={cornerRadius}
-                    onChange={(e) => setCornerRadius(Number(e.target.value))}
-                    className="w-full accent-neutral-400"
-                  />
-                  <p className="text-xs text-neutral-400">
-                    Drag to 100 for perfect circle
-                  </p>
+              <div className="flex gap-3">
+                <div className="flex-1 border-2 border-neutral-700 rounded-lg p-3 ">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-neutral-300">
+                      Corner Radius
+                    </Label>
+                    <Slider
+                      value={[cornerRadius]}
+                      onValueChange={(vals) => setCornerRadius(vals[0])}
+                      min={0}
+                      max={100}
+                      step={1}
+                      className="
+    w-full
+    [&_[data-slot=slider-track]]:bg-neutral-700
+    [&_[data-slot=slider-range]]:bg-neutral-200
+  "
+                    />
+                    <div className="text-xs text-neutral-400 text-center">
+                      {cornerRadius >= 100 ? "Circle" : `${cornerRadius}px`}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-sm text-neutral-200">
-                    Zoom: {zoom.toFixed(2)}
-                  </Label>
-                  <Input
-                    type="range"
-                    min="1"
-                    max="3"
-                    step="0.1"
-                    value={zoom}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full accent-neutral-400"
-                  />
+                <div className="flex-1 border-2 border-neutral-700 rounded-lg p-3">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-neutral-300">
+                      Zoom Level
+                    </Label>
+                    <Slider
+                      value={[zoom]}
+                      onValueChange={(vals) => setZoom(vals[0])}
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      className="
+    w-full
+    [&_[data-slot=slider-track]]:bg-neutral-700
+    [&_[data-slot=slider-range]]:bg-neutral-200
+  "
+                    />
+                    <div className="text-xs text-neutral-400 text-center">
+                      {zoom.toFixed(1)}x
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </UploadCard>
         </div>
 
-        <div className="h-full">
+        <div className="h-full min-h-0">
           <ResultCard
             resultUrl={croppedImage}
             resultFormat="png"

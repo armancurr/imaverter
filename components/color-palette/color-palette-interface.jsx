@@ -11,6 +11,8 @@ import {
 import Color from "colorjs.io";
 import { toast } from "sonner";
 import { Palette } from "@phosphor-icons/react";
+import { Slider } from "@/components/ui/slider";
+import Image from "next/image";
 
 function kmeans(data, k, maxIter = 20) {
   const centroids = [];
@@ -157,23 +159,23 @@ export default function ColorPaletteInterface() {
     toast.success(`${hex} copied!`);
   };
 
-  return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col">
-      <div className="flex items-center space-x-3 mb-6 px-1">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-100">
-            Color Palette Extractor
-          </h1>
-          <p className="text-sm text-neutral-400">
-            Extract dominant colors from your image using k-means clustering in
-            Lab color space.
-          </p>
-        </div>
-      </div>
+  const previewArea = preview ? (
+    <div className="flex-1 relative rounded-md overflow-hidden min-h-[280px] flex items-center justify-center">
+      <Image
+        src={preview}
+        alt="Preview"
+        width={800}
+        height={600}
+        className="max-w-full max-h-full object-contain"
+        unoptimized
+      />
+    </div>
+  ) : null;
 
-      {/* Main content */}
-      <div className="flex-1 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="h-full">
+  return (
+    <div className="h-[calc(100vh-8rem)] flex flex-col overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 gap-3 lg:grid-cols-2 min-h-0">
+        <div className="h-full min-h-0">
           <UploadCard
             file={file}
             setFile={setFile}
@@ -188,25 +190,52 @@ export default function ColorPaletteInterface() {
             description="Upload an image to extract its color palette"
             buttonText="Extract Palette"
             acceptedFormats="PNG, JPG, WEBP up to 10MB"
+            customContent={previewArea}
           >
-            {/* Number of colors slider */}
             {preview && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-neutral-200">
-                    Number of Colors: {numColors}
-                  </label>
-                  <input
-                    type="range"
-                    min={2}
-                    max={10}
-                    value={numColors}
-                    onChange={(e) => setNumColors(Number(e.target.value))}
-                    className="w-full accent-neutral-400"
-                  />
-                  <div className="flex justify-between text-xs text-neutral-400">
-                    <span>Fewer</span>
-                    <span>More</span>
+              <div className="border-2 border-neutral-700 rounded-lg p-3">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs text-neutral-300">
+                      Number of Colors
+                    </label>
+                    <div className="text-xs text-neutral-400">
+                      {numColors} colors
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <Slider
+                      value={[numColors]}
+                      onValueChange={(values) => setNumColors(values[0])}
+                      min={2}
+                      max={10}
+                      step={1}
+                      className="
+    w-full
+    [&_[data-slot=slider-track]]:bg-neutral-700
+    [&_[data-slot=slider-range]]:bg-neutral-200
+  "
+                    />
+
+                    {/* Color count markers */}
+                    <div className="relative mt-2 h-5 overflow-hidden">
+                      {[2, 4, 6, 8, 10].map((count, index) => {
+                        const position = ((count - 2) / (10 - 2)) * 100;
+                        return (
+                          <div
+                            key={count}
+                            className="absolute transform -translate-x-1/2"
+                            style={{ left: `${position}%` }}
+                          >
+                            <div className="w-0.5 h-1.5 bg-neutral-500 mx-auto"></div>
+                            <div className="text-[10px] text-neutral-500 mt-0.5 whitespace-nowrap">
+                              {count}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -214,8 +243,7 @@ export default function ColorPaletteInterface() {
           </UploadCard>
         </div>
 
-        {/* Palette result */}
-        <div className="h-full">
+        <div className="h-full min-h-0">
           <ResultCard
             resultUrl={palette.length > 0 ? "palette-extracted" : null}
             resultFormat="palette"
@@ -235,7 +263,7 @@ export default function ColorPaletteInterface() {
             customIcon={<Palette className="h-5 w-5" />}
             customContent={
               palette.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center max-w-md mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-16 justify-items-center max-w-md mx-auto">
                   {palette.map((swatch, i) => (
                     <Tooltip key={i}>
                       <TooltipTrigger asChild>
@@ -245,18 +273,14 @@ export default function ColorPaletteInterface() {
                         >
                           <div
                             style={{
-                              width: 56,
-                              height: 56,
+                              width: 85,
+                              height: 85,
                               background: swatch.hex,
-                              borderRadius: 8,
                               border: "1px solid #525252",
                               transition: "box-shadow 0.2s",
                             }}
-                            className="group-hover:shadow-lg"
+                            className="group-hover:shadow-lg rounded-lg"
                           />
-                          <span className="text-xs mt-2 text-neutral-400">
-                            {swatch.percent}%
-                          </span>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>

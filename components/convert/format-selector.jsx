@@ -60,27 +60,15 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
 
   return (
     <div className="space-y-4">
-      <div className="space-y-1">
-        <div className="flex items-center space-x-1">
-          <Question weight="bold" className="h-4 w-4 text-neutral-400" />
-          <Label className="text-sm font-medium text-neutral-200">
-            Output Format
-          </Label>
-        </div>
-        <p className="text-xs text-neutral-400">
-          Select the desired file format for conversion
-        </p>
-      </div>
-
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             role="combobox"
             aria-expanded={open}
-            className={`w-full justify-between h-auto p-4 shadow-none cursor-pointer hover:shadow-md transition-all duration-200 text-neutral-100 ${
+            className={`w-full justify-between h-auto p-4 border-2 shadow-none cursor-pointer hover:shadow-md transition-all duration-200 text-neutral-200 ${
               selectedOption
-                ? "bg-neutral-800 hover:bg-neutral-700 border-neutral-600"
-                : "bg-neutral-900 hover:bg-neutral-800 border-neutral-700"
+                ? "bg-transparent border-neutral-600"
+                : "bg-transparent border-neutral-700"
             }`}
           >
             <div className="flex items-center space-x-3">
