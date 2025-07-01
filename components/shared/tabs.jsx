@@ -14,21 +14,25 @@ export default function TopDock({ activeTab, setActiveTab }) {
       id: "crop",
       label: "Crop",
       icon: Scissors,
+      title: "Crop Image",
     },
     {
       id: "convert",
       label: "Convert",
       icon: Recycle,
+      title: "Convert Image",
     },
     {
       id: "compress",
       label: "Compress",
       icon: Resize,
+      title: "Compress Image",
     },
     {
       id: "color-palette",
       label: "Color-Palette",
       icon: Palette,
+      title: "Color Palette Extractor",
     },
   ];
 
@@ -44,7 +48,6 @@ export default function TopDock({ activeTab, setActiveTab }) {
   ].join(" ");
   const buttonActiveClass = "text-neutral-200";
 
-  // Calculate the position of the active indicator
   const activeIndex = tabs.findIndex((tab) => tab.id === activeTab);
   const indicatorOffset =
     activeIndex * (buttonWidth + gap) +
@@ -52,9 +55,8 @@ export default function TopDock({ activeTab, setActiveTab }) {
     paddingLeft;
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="flex items-center space-x-2 bg-neutral-900 border-2 border-neutral-800 rounded-xl px-3 py-2 shadow-2xl backdrop-blur-sm relative">
-        {/* Sliding indicator */}
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center h-20 px-8 mt-2">
+      <div className="flex items-center space-x-2 bg-gradient-to-b from-neutral-900 to-neutral-950 border border-neutral-700 rounded-xl px-3 py-2 shadow-2xl backdrop-blur-sm relative">
         <div
           className="absolute bottom-1 h-0.5 w-10 bg-neutral-200 rounded-full transition-all duration-300 ease-out"
           style={{
@@ -94,6 +96,6 @@ export default function TopDock({ activeTab, setActiveTab }) {
           <GithubLogo size={20} />
         </button>
       </div>
-    </div>
+    </header>
   );
 }

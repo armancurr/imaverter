@@ -85,7 +85,7 @@ export default function UploadCard({
   };
 
   return (
-    <Card className="flex flex-col border shadow-sm h-full bg-neutral-900 border-2 border-neutral-800">
+    <Card className="flex flex-col border shadow-sm h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden">
       <CardHeader className="pb-4 flex-shrink-0">
         <CardTitle className="flex items-center space-x-2 text-neutral-200">
           <UploadSimple className="h-5 w-5" />
@@ -95,13 +95,13 @@ export default function UploadCard({
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col flex-1 p-6">
-        <div className="flex-1 flex flex-col">
+      <CardContent className="flex flex-col flex-1 p-6 min-h-0">
+        <div className="flex-1 flex flex-col min-h-0">
           {customContent ? (
-            <div className="flex-1 flex flex-col">{customContent}</div>
+            <div className="flex-1 flex flex-col min-h-0">{customContent}</div>
           ) : (
             <div
-              className={`flex-1 min-h-[320px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center border-neutral-600 ${
+              className={`flex-1 min-h-[280px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center border-neutral-600 ${
                 dragActive
                   ? "shadow-lg scale-[1.02]"
                   : file
@@ -130,19 +130,19 @@ export default function UploadCard({
                     <Image
                       src={preview}
                       alt="Preview"
-                      className="mx-auto rounded-md object-contain max-h-[280px] max-w-full"
+                      className="mx-auto rounded-md object-contain max-h-[240px] max-w-full"
                       width={400}
                       height={400}
                     />
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <FileImage className="mx-auto h-12 w-12 text-neutral-400" />
+                  <div className="space-y-2">
+                    <FileImage className="mx-auto h-10 w-10 text-neutral-400" />
                     <div>
-                      <p className="font-medium text-lg text-neutral-200">
+                      <p className="font-medium text-md text-neutral-200">
                         Click to upload or drag and drop
                       </p>
-                      <p className="mt-2 text-sm text-neutral-400">
+                      <p className="mt-2 text-xs text-neutral-400">
                         {acceptedFormats}
                       </p>
                     </div>
@@ -153,8 +153,8 @@ export default function UploadCard({
           )}
         </div>
 
-        <div className="space-y-4 mt-6 flex-shrink-0">
-          {children}
+        <div className="space-y-4 mt-4 flex-shrink-0">
+          <div className="max-h-32 overflow-y-auto">{children}</div>
           {onSubmit && (
             <Button
               onClick={onSubmit}
