@@ -62,16 +62,12 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
     <div className="space-y-4">
       <div className="space-y-1">
         <div className="flex items-center space-x-1">
-          <Question
-            weight="bold"
-            className="h-4 w-4"
-            style={{ color: "#5C5470" }}
-          />
-          <Label className="text-sm font-medium" style={{ color: "#352F44" }}>
+          <Question weight="bold" className="h-4 w-4 text-neutral-400" />
+          <Label className="text-sm font-medium text-neutral-200">
             Output Format
           </Label>
         </div>
-        <p className="text-xs" style={{ color: "#5C5470" }}>
+        <p className="text-xs text-neutral-400">
           Select the desired file format for conversion
         </p>
       </div>
@@ -81,39 +77,29 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
           <Button
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between h-auto p-4 shadow-none cursor-pointer hover:shadow-md transition-all duration-200"
-            style={{
-              backgroundColor: selectedOption ? "#FAF0E6" : "#FFFFFF",
-              border: `1px solid ${selectedOption ? "#5C5470" : "#B9B4C7"}`,
-              color: "#352F44",
-            }}
+            className={`w-full justify-between h-auto p-4 shadow-none cursor-pointer hover:shadow-md transition-all duration-200 text-neutral-100 ${
+              selectedOption
+                ? "bg-neutral-800 hover:bg-neutral-700 border-neutral-600"
+                : "bg-neutral-900 hover:bg-neutral-800 border-neutral-700"
+            }`}
           >
             <div className="flex items-center space-x-3">
               <div
-                className="p-2 rounded-sm"
-                style={{
-                  backgroundColor: selectedOption ? "#B9B4C7" : "#FAF0E6",
-                }}
+                className={`p-2 rounded-sm ${
+                  selectedOption ? "bg-neutral-700" : "bg-neutral-800"
+                }`}
               >
                 <SelectedIcon
-                  className="w-4 h-4"
-                  style={{
-                    color: selectedOption ? "#352F44" : "#5C5470",
-                  }}
+                  className="w-4 h-4 text-neutral-200"
                   weight="bold"
                 />
               </div>
               <div className="text-left flex-1">
-                <div
-                  className="text-sm font-medium"
-                  style={{
-                    color: selectedOption ? "#352F44" : "#5C5470",
-                  }}
-                >
+                <div className="text-sm font-medium text-neutral-100">
                   {selectedOption ? selectedOption.label : "Select format..."}
                 </div>
                 {selectedOption && (
-                  <div className="text-xs" style={{ color: "#5C5470" }}>
+                  <div className="text-xs text-neutral-400">
                     {selectedDescription}
                   </div>
                 )}
@@ -123,8 +109,7 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
               <CaretUp
                 className={`h-4 w-4 transition-transform ${
                   open ? "rotate-180" : ""
-                }`}
-                style={{ color: "#5C5470" }}
+                } text-neutral-400`}
                 weight="bold"
               />
             </div>
@@ -132,12 +117,8 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
         </PopoverTrigger>
 
         <PopoverContent
-          className="w-[var(--radix-popover-trigger-width)] p-2 shadow-lg"
+          className="w-[var(--radix-popover-trigger-width)] p-2 shadow-lg bg-neutral-900 border-neutral-800"
           align="start"
-          style={{
-            backgroundColor: "#FFFFFF",
-            border: `1px solid #B9B4C7`,
-          }}
         >
           <div className="grid grid-cols-2 gap-2">
             {formatOptions.map((option) => {
@@ -155,44 +136,30 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
                     setFormat(option.value);
                     setOpen(false);
                   }}
-                  className="relative flex items-center justify-between w-full p-3 rounded-md shadow-none cursor-pointer transition-all duration-200 hover:shadow-md"
-                  style={{
-                    backgroundColor: isSelected ? "#FAF0E6" : "#FFFFFF",
-                    border: `1px solid ${isSelected ? "#5C5470" : "#B9B4C7"}`,
-                  }}
+                  className={`relative flex items-center justify-between w-full p-3 rounded-md shadow-none cursor-pointer transition-all duration-200 hover:shadow-md ${
+                    isSelected
+                      ? "bg-neutral-800 border-neutral-600"
+                      : "bg-neutral-900 hover:bg-neutral-800 border-neutral-700"
+                  } border`}
                   type="button"
                 >
                   <div className="flex items-center space-x-3">
                     <div
-                      className="p-2 rounded-md"
-                      style={{
-                        backgroundColor: isSelected ? "#B9B4C7" : "#FAF0E6",
-                      }}
+                      className={`p-2 rounded-md ${
+                        isSelected ? "bg-neutral-700" : "bg-neutral-800"
+                      }`}
                     >
                       <IconComponent
-                        className="w-4 h-4"
-                        style={{
-                          color: isSelected ? "#352F44" : "#5C5470",
-                        }}
+                        className="w-4 h-4 text-neutral-200"
                         weight="duotone"
                       />
                     </div>
 
                     <div className="text-left">
-                      <div
-                        className="text-sm font-medium"
-                        style={{
-                          color: isSelected ? "#352F44" : "#5C5470",
-                        }}
-                      >
+                      <div className="text-sm font-medium text-neutral-100">
                         {option.label}
                       </div>
-                      <div
-                        className="text-xs"
-                        style={{
-                          color: "#5C5470",
-                        }}
-                      >
+                      <div className="text-xs text-neutral-400">
                         {description}
                       </div>
                     </div>

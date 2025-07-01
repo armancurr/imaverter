@@ -16,14 +16,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ReactScan />
-      <body className={`${funnelSans.variable} antialiased bg-[#FAF0E6]`}>
+      <body
+        className={`${funnelSans.variable} antialiased bg-neutral-950 text-neutral-200`}
+      >
         {children}
-        <Toaster
+        {/* <Toaster
           position="top-right"
           richColors={true}
           duration={4000}
           theme="light"
-        />
+        /> */}
       </body>
     </html>
   );
