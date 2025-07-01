@@ -6,3 +6,4 @@ build
 .env
 .env.local
 .env.production
+package-lock.json
