@@ -76,10 +76,8 @@ export default function ConvertInterface() {
       {/* Header */}
       <div className="flex items-center space-x-3 mb-6 px-1">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: "#352F44" }}>
-            Convert Image
-          </h1>
-          <p className="text-sm" style={{ color: "#5C5470" }}>
+          <h1 className="text-2xl font-bold text-neutral-100">Convert Image</h1>
+          <p className="text-sm text-neutral-400">
             Convert images between different formats like JPG, PNG, WEBP, and
             more
           </p>

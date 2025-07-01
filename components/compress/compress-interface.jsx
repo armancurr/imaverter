@@ -109,10 +109,10 @@ export default function CompressInterface() {
       {/* Header */}
       <div className="flex items-center space-x-3 mb-6 px-1">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: "#352F44" }}>
+          <h1 className="text-2xl font-bold text-neutral-100">
             Compress Image
           </h1>
-          <p className="text-sm" style={{ color: "#5C5470" }}>
+          <p className="text-sm text-neutral-400">
             Reduce image file sizes while maintaining quality with adjustable
             compression
           </p>
@@ -148,34 +148,21 @@ export default function CompressInterface() {
             {preview && (
               <div className="space-y-4">
                 {/* File size info */}
-                <div
-                  className="rounded-md p-3"
-                  style={{ backgroundColor: "#FAF0E6" }}
-                >
+                <div className="rounded-md p-3 bg-neutral-800 border border-neutral-700">
                   <div className="flex items-center space-x-1 mb-2">
-                    <Info
-                      weight="bold"
-                      className="h-4 w-4"
-                      style={{ color: "#5C5470" }}
-                    />
-                    <Label
-                      className="text-sm font-medium"
-                      style={{ color: "#352F44" }}
-                    >
+                    <Info weight="bold" className="h-4 w-4 text-neutral-400" />
+                    <Label className="text-sm font-medium text-neutral-200">
                       File Information
                     </Label>
                   </div>
-                  <div
-                    className="text-xs space-y-1"
-                    style={{ color: "#5C5470" }}
-                  >
+                  <div className="text-xs space-y-1 text-neutral-400">
                     <div>Original size: {formatFileSize(originalSize)}</div>
                     {compressedSize > 0 && (
                       <>
                         <div>
                           Compressed size: {formatFileSize(compressedSize)}
                         </div>
-                        <div style={{ color: "#352F44" }}>
+                        <div className="text-neutral-200">
                           Reduction: {compressionRatio.toFixed(1)}%
                         </div>
                       </>
@@ -186,7 +173,7 @@ export default function CompressInterface() {
                 {/* Quality slider */}
                 <div className="space-y-3">
                   <div className="space-y-2">
-                    <Label className="text-sm" style={{ color: "#352F44" }}>
+                    <Label className="text-sm text-neutral-200">
                       Compression Quality: {quality}%
                     </Label>
                     <Input
@@ -195,19 +182,13 @@ export default function CompressInterface() {
                       max="95"
                       value={quality}
                       onChange={(e) => setQuality(Number(e.target.value))}
-                      className="w-full"
-                      style={{
-                        accentColor: "#5C5470",
-                      }}
+                      className="w-full accent-neutral-400"
                     />
-                    <div
-                      className="flex justify-between text-xs"
-                      style={{ color: "#5C5470" }}
-                    >
+                    <div className="flex justify-between text-xs text-neutral-400">
                       <span>Smaller file</span>
                       <span>Better quality</span>
                     </div>
-                    <p className="text-xs" style={{ color: "#5C5470" }}>
+                    <p className="text-xs text-neutral-400">
                       Lower quality = smaller file size, higher quality = larger
                       file size
                     </p>

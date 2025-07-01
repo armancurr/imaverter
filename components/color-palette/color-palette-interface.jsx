@@ -161,10 +161,10 @@ export default function ColorPaletteInterface() {
     <div className="h-[calc(100vh-8rem)] flex flex-col">
       <div className="flex items-center space-x-3 mb-6 px-1">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: "#352F44" }}>
+          <h1 className="text-2xl font-bold text-neutral-100">
             Color Palette Extractor
           </h1>
-          <p className="text-sm" style={{ color: "#5C5470" }}>
+          <p className="text-sm text-neutral-400">
             Extract dominant colors from your image using k-means clustering in
             Lab color space.
           </p>
@@ -193,10 +193,7 @@ export default function ColorPaletteInterface() {
             {preview && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label
-                    className="text-sm font-medium"
-                    style={{ color: "#352F44" }}
-                  >
+                  <label className="text-sm font-medium text-neutral-200">
                     Number of Colors: {numColors}
                   </label>
                   <input
@@ -205,13 +202,9 @@ export default function ColorPaletteInterface() {
                     max={10}
                     value={numColors}
                     onChange={(e) => setNumColors(Number(e.target.value))}
-                    className="w-full"
-                    style={{ accentColor: "#5C5470" }}
+                    className="w-full accent-neutral-400"
                   />
-                  <div
-                    className="flex justify-between text-xs"
-                    style={{ color: "#5C5470" }}
-                  >
+                  <div className="flex justify-between text-xs text-neutral-400">
                     <span>Fewer</span>
                     <span>More</span>
                   </div>
@@ -256,15 +249,12 @@ export default function ColorPaletteInterface() {
                               height: 56,
                               background: swatch.hex,
                               borderRadius: 8,
-                              border: "1px solid #ccc",
+                              border: "1px solid #525252",
                               transition: "box-shadow 0.2s",
                             }}
                             className="group-hover:shadow-lg"
                           />
-                          <span
-                            className="text-xs mt-2"
-                            style={{ color: "#5C5470" }}
-                          >
+                          <span className="text-xs mt-2 text-neutral-400">
                             {swatch.percent}%
                           </span>
                         </div>

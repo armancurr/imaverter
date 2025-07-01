@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
 
 export default function UploadCard({
   file,
@@ -84,22 +85,13 @@ export default function UploadCard({
   };
 
   return (
-    <Card
-      className="flex flex-col border shadow-lg h-full"
-      style={{
-        backgroundColor: "#FFFFFF",
-        borderColor: "#B9B4C7",
-      }}
-    >
+    <Card className="flex flex-col border shadow-sm h-full bg-neutral-900 border-2 border-neutral-800">
       <CardHeader className="pb-4 flex-shrink-0">
-        <CardTitle
-          className="flex items-center space-x-2"
-          style={{ color: "#352F44" }}
-        >
+        <CardTitle className="flex items-center space-x-2 text-neutral-200">
           <UploadSimple className="h-5 w-5" />
           <span>{title}</span>
         </CardTitle>
-        <CardDescription style={{ color: "#5C5470" }}>
+        <CardDescription className="text-neutral-400">
           {description}
         </CardDescription>
       </CardHeader>
@@ -109,17 +101,13 @@ export default function UploadCard({
             <div className="flex-1 flex flex-col">{customContent}</div>
           ) : (
             <div
-              className={`flex-1 min-h-[320px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center ${
+              className={`flex-1 min-h-[320px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center border-neutral-600 ${
                 dragActive
                   ? "shadow-lg scale-[1.02]"
                   : file
                     ? "shadow-md"
                     : "hover:shadow-md"
               }`}
-              style={{
-                borderColor: dragActive || file ? "#5C5470" : "#B9B4C7",
-                backgroundColor: dragActive || file ? "#FAF0E6" : "#FFFFFF",
-              }}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
@@ -133,7 +121,7 @@ export default function UploadCard({
                 onChange={(e) => handleFileChange(e.target.files[0])}
               />
 
-              <label
+              <Label
                 htmlFor="file-upload-shared"
                 className="block cursor-pointer w-full h-full flex items-center justify-center"
               >
@@ -149,24 +137,18 @@ export default function UploadCard({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <FileImage
-                      className="mx-auto h-12 w-12"
-                      style={{ color: "#5C5470" }}
-                    />
+                    <FileImage className="mx-auto h-12 w-12 text-neutral-400" />
                     <div>
-                      <p
-                        className="font-medium text-lg"
-                        style={{ color: "#352F44" }}
-                      >
+                      <p className="font-medium text-lg text-neutral-200">
                         Click to upload or drag and drop
                       </p>
-                      <p className="mt-2 text-sm" style={{ color: "#5C5470" }}>
+                      <p className="mt-2 text-sm text-neutral-400">
                         {acceptedFormats}
                       </p>
                     </div>
                   </div>
                 )}
-              </label>
+              </Label>
             </div>
           )}
         </div>
@@ -177,11 +159,7 @@ export default function UploadCard({
             <Button
               onClick={onSubmit}
               disabled={!file || loading}
-              className="w-full py-6 transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:shadow-lg disabled:hover:scale-100 disabled:hover:shadow-none"
-              style={{
-                backgroundColor: !file || loading ? "#B9B4C7" : "#5C5470",
-                color: "#FAF0E6",
-              }}
+              className="w-full py-4 cursor-pointer bg-neutral-800 text-neutral-200"
               size="lg"
             >
               {loading ? (

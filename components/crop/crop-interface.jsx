@@ -104,10 +104,7 @@ export default function CropInterface() {
 
   // Custom cropper area that replaces the standard upload area when image is loaded
   const cropperArea = preview ? (
-    <div
-      className="flex-1 relative rounded-md overflow-hidden min-h-[320px]"
-      style={{ backgroundColor: "#B9B4C7" }}
-    >
+    <div className="flex-1 relative rounded-md overflow-hidden min-h-[320px] bg-neutral-800">
       <Cropper
         image={preview}
         crop={crop}
@@ -126,10 +123,8 @@ export default function CropInterface() {
       {/* Header */}
       <div className="flex items-center space-x-3 mb-6 px-1">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: "#352F44" }}>
-            Crop Image
-          </h1>
-          <p className="text-sm" style={{ color: "#5C5470" }}>
+          <h1 className="text-2xl font-bold text-neutral-100">Crop Image</h1>
+          <p className="text-sm text-neutral-400">
             Upload and crop images with custom corner radius or create perfect
             circles
           </p>
@@ -159,7 +154,7 @@ export default function CropInterface() {
             {preview && (
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label className="text-sm" style={{ color: "#352F44" }}>
+                  <Label className="text-sm text-neutral-200">
                     Corner Radius:{" "}
                     {cornerRadius >= 100 ? "Circle" : `${cornerRadius}px`}
                   </Label>
@@ -169,18 +164,15 @@ export default function CropInterface() {
                     max="100"
                     value={cornerRadius}
                     onChange={(e) => setCornerRadius(Number(e.target.value))}
-                    className="w-full"
-                    style={{
-                      accentColor: "#5C5470",
-                    }}
+                    className="w-full accent-neutral-400"
                   />
-                  <p className="text-xs" style={{ color: "#5C5470" }}>
+                  <p className="text-xs text-neutral-400">
                     Drag to 100 for perfect circle
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm" style={{ color: "#352F44" }}>
+                  <Label className="text-sm text-neutral-200">
                     Zoom: {zoom.toFixed(2)}
                   </Label>
                   <Input
@@ -190,10 +182,7 @@ export default function CropInterface() {
                     step="0.1"
                     value={zoom}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full"
-                    style={{
-                      accentColor: "#5C5470",
-                    }}
+                    className="w-full accent-neutral-400"
                   />
                 </div>
               </div>
