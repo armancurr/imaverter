@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import {
   UploadSimple,
   FileImage,
@@ -36,6 +37,9 @@ export default function UploadCard({
   customContent,
   tabId,
 }) {
+  const fileInputRef = useRef(null);
+  const newUploadInputRef = useRef(null);
+
   const {
     file,
     preview,
@@ -43,6 +47,7 @@ export default function UploadCard({
     setDragActive,
     handleFileSelection,
     setUploadedFrom,
+    clearFile,
   } = useFileStore();
 
   const iconMap = {
@@ -97,6 +102,37 @@ export default function UploadCard({
     }
   };
 
+  const handleNewUpload = () => {
+    newUploadInputRef.current?.click();
+  };
+
+  const handleNewFileChange = (selectedFile) => {
+    if (!selectedFile) return;
+
+    if (onClearResult) {
+      onClearResult();
+    }
+    clearFile();
+
+    const result = handleFileSelection(selectedFile);
+
+    if (!result.success && result.error) {
+      toast.error(result.error, {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
+      return;
+    }
+
+    if (selectedFile && tabId) {
+      setUploadedFrom(tabId);
+    }
+  };
+
   return (
     <Card className="flex flex-col border shadow-sm h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden rounded-xl">
       <CardHeader className="pb-4 flex-shrink-0">
@@ -127,6 +163,7 @@ export default function UploadCard({
               onDrop={handleDrop}
             >
               <Input
+                ref={fileInputRef}
                 id="file-upload-shared"
                 type="file"
                 accept="image/*"
@@ -169,23 +206,45 @@ export default function UploadCard({
         <div className="space-y-4 mt-4 flex-shrink-0">
           <div className="max-h-32 overflow-y-auto">{children}</div>
           {onSubmit && (
-            <Button
-              onClick={onSubmit}
-              disabled={!file || loading}
-              className="w-full py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
-              size="lg"
-            >
-              {loading ? (
+            <div className="flex gap-2">
+              <Button
+                onClick={onSubmit}
+                disabled={!file || loading}
+                className="flex-1 py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
+                size="lg"
+              >
+                {loading ? (
+                  <>
+                    <Spinner className="h-5 w-5 animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    {buttonText}
+                    <ArrowLineRight weight="bold" className="ml-1 h-5 w-5" />
+                  </>
+                )}
+              </Button>
+              {file && (
                 <>
-                  <Spinner className="h-5 w-5 animate-spin" />
-                </>
-              ) : (
-                <>
-                  {buttonText}
-                  <ArrowLineRight weight="bold" className="ml-1 h-5 w-5" />
+                  <Input
+                    ref={newUploadInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleNewFileChange(e.target.files[0])}
+                  />
+                  <Button
+                    onClick={handleNewUpload}
+                    disabled={loading}
+                    className="py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
+                    size="lg"
+                  >
+                    <UploadSimple className="h-5 w-5" />
+                    <span>Upload New Image</span>
+                  </Button>
                 </>
               )}
-            </Button>
+            </div>
           )}
         </div>
       </CardContent>
