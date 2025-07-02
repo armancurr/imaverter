@@ -1,148 +1,140 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Command } from "cmdk";
+import { useEffect } from "react";
 import {
-  ArrowsClockwise,
-  Crop,
-  Archive,
-  Palette,
   Command as CommandIcon,
+  DownloadSimple,
+  TrashSimple,
 } from "@phosphor-icons/react";
+import useRecentImages from "@/hooks/use-recent-images";
+import Image from "next/image";
+import { Progress } from "@/components/ui/progress";
 
-export default function CommandPalette({ activeTab, setActiveTab }) {
-  const [open, setOpen] = useState(false);
+export default function CommandPalette({ open, setOpen }) {
+  const {
+    recentImages,
+    downloadRecentImage,
+    clearRecentImages,
+    getStorageInfo,
+  } = useRecentImages();
 
-  // Toggle command palette with Cmd+K / Ctrl+K
   useEffect(() => {
     const down = (e) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
     };
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, []);
+  }, [setOpen]);
 
-  const tabs = [
-    {
-      id: "crop",
-      label: "Crop",
-      icon: Crop,
-      description: "Crop and resize images",
-      keywords: ["crop", "resize", "cut", "trim"],
-    },
-    {
-      id: "convert",
-      label: "Convert",
-      icon: ArrowsClockwise,
-      description: "Convert image formats",
-      keywords: [
-        "convert",
-        "format",
-        "jpg",
-        "png",
-        "webp",
-        "avif",
-        "transform",
-      ],
-    },
-    {
-      id: "compress",
-      label: "Compress",
-      icon: Archive,
-      description: "Compress image files",
-      keywords: ["compress", "reduce", "optimize", "size", "quality"],
-    },
-    {
-      id: "color-palette",
-      label: "Color Palette",
-      icon: Palette,
-      description: "Extract color palette from images",
-      keywords: ["color", "palette", "extract", "colors", "theme"],
-    },
-  ];
-
-  const handleSelect = (tabId) => {
-    setActiveTab(tabId);
-    setOpen(false);
+  const handleImageClick = (item) => {
+    downloadRecentImage(item);
   };
+
+  const handleClearAll = () => {
+    clearRecentImages();
+  };
+
+  const formatTimeAgo = (timestamp) => {
+    const minutes = Math.floor((Date.now() - timestamp) / (1000 * 60));
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
+  };
+
+  const storageInfo = getStorageInfo();
+  const maxStorageKB = 1024; // 1MB limit
+  const storagePercentage = Math.min(
+    (parseFloat(storageInfo.sizeInKB) / maxStorageKB) * 100,
+    100,
+  );
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh] animate-in fade-in-0 duration-100">
       <div
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 backdrop-blur-md animate-in fade-in-0 duration-100"
         onClick={() => setOpen(false)}
       />
-
-      {/* Command palette */}
-      <Command className="relative w-full max-w-lg mx-4 rounded-xl border shadow-2xl bg-neutral-900 border-neutral-800">
-        <div className="flex items-center border-b px-4 border-neutral-800">
-          <CommandIcon className="mr-2 h-4 w-4 text-neutral-400" />
-          <Command.Input
-            placeholder="Search tools..."
-            className="flex-1 border-0 bg-transparent py-4 text-sm outline-none text-neutral-100 placeholder:text-neutral-400"
-          />
-        </div>
-        <Command.List className="max-h-80 overflow-y-auto p-2">
-          <Command.Empty className="py-8 text-center text-sm text-neutral-400">
-            No tools found.
-          </Command.Empty>
-
-          <Command.Group heading="Navigation">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-
-              return (
-                <Command.Item
-                  key={tab.id}
-                  value={`${tab.label} ${tab.description} ${tab.keywords.join(" ")}`}
-                  onSelect={() => handleSelect(tab.id)}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-3 cursor-pointer transition-all duration-200 ${
-                    isActive
-                      ? "shadow-md bg-neutral-200 text-neutral-900"
-                      : "hover:shadow-sm hover:bg-neutral-800 text-neutral-200"
-                  }`}
+      <div className="relative w-full max-w-2xl mx-4 rounded-xl border shadow-2xl bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 animate-in fade-in-0 duration-100">
+        <div className="p-4">
+          {recentImages.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-neutral-200">
+                  Recent Images
+                </h3>
+                <button
+                  onClick={handleClearAll}
+                  className="flex items-center gap-1 px-2 py-1 text-xs text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 rounded transition-colors"
                 >
-                  <Icon
-                    size={18}
-                    className={
-                      isActive ? "text-neutral-900" : "text-neutral-400"
-                    }
-                  />
-                  <div className="flex-1">
-                    <div
-                      className={`font-medium ${isActive ? "text-neutral-900" : "text-neutral-100"}`}
-                    >
-                      {tab.label}
+                  <TrashSimple className="h-3 w-3" />
+                  Clear All
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2 text-xs text-neutral-500">
+                  <span>Storage Used</span>
+                  <span>
+                    {storageInfo.sizeInKB}KB / {maxStorageKB}KB
+                  </span>
+                </div>
+                <Progress value={storagePercentage} className="h-2" />
+              </div>
+
+              <div className="grid grid-cols-4 gap-2">
+                {recentImages.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => handleImageClick(item)}
+                    className="group cursor-pointer p-2 rounded-xl hover:bg-neutral-900 transition-colors"
+                  >
+                    <div className="relative aspect-square bg-neutral-800 rounded-lg overflow-hidden mb-2">
+                      <Image
+                        src={item.thumbnailUrl || item.resultUrl}
+                        alt={item.originalName}
+                        fill
+                        className="object-cover transition-transform duration-200 border-2 border-neutral-800 rounded-lg"
+                        sizes="150px"
+                      />
+                      <div className="absolute inset-0 group-hover:bg-black/20 group-hover:backdrop-blur-xs transition-all duration-200 flex items-center justify-center">
+                        <DownloadSimple className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      </div>
                     </div>
-                    <div
-                      className={`text-xs ${isActive ? "text-neutral-700" : "text-neutral-400"}`}
-                    >
-                      {tab.description}
+
+                    <div className="text-center">
+                      <p className="text-xs text-neutral-200 truncate mb-1">
+                        {item.originalName}
+                      </p>
+                      <p className="text-xs text-neutral-500">{item.action}</p>
+                      <p className="text-xs text-neutral-600">
+                        {formatTimeAgo(item.timestamp)}
+                      </p>
                     </div>
                   </div>
-                  {isActive && (
-                    <div className="text-xs px-2 py-1 rounded bg-neutral-700 text-neutral-200">
-                      Active
-                    </div>
-                  )}
-                </Command.Item>
-              );
-            })}
-          </Command.Group>
-        </Command.List>
-
-        <div className="border-t px-4 py-2 text-xs text-center border-neutral-800 text-neutral-400">
-          Use ↑↓ to navigate, Enter to select, Esc to close
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <CommandIcon className="mx-auto h-8 w-8 text-neutral-600 mb-3" />
+              <p className="text-sm text-neutral-400 mb-1">No recent images</p>
+              <p className="text-xs text-neutral-500">
+                Process some images to see them here
+              </p>
+            </div>
+          )}
         </div>
-      </Command>
+      </div>
     </div>
   );
 }

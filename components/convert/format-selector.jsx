@@ -1,13 +1,12 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { memo, useState } from "react";
+import { useState } from "react";
 import {
   FilePng,
   FileJpg,
@@ -15,7 +14,6 @@ import {
   FileSvg,
   FileImage,
   CaretUp,
-  Question,
 } from "@phosphor-icons/react";
 
 const formatIcons = {
@@ -59,21 +57,21 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
     : "";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             role="combobox"
             aria-expanded={open}
-            className={`w-full justify-between h-auto p-4 border-2 shadow-none cursor-pointer hover:shadow-md transition-all duration-200 text-neutral-200 ${
+            className={`w-full h-[97px] justify-between p-4 border-2 rounded-xl shadow-none cursor-pointer hover:shadow-md transition-all duration-200 text-neutral-200 ${
               selectedOption
-                ? "bg-transparent border-neutral-600"
+                ? "bg-transparent border-neutral-700"
                 : "bg-transparent border-neutral-700"
             }`}
           >
-            <div className="flex items-center space-x-3">
+            <div className="flex items-start space-x-3">
               <div
-                className={`p-2 rounded-sm ${
+                className={`p-2 rounded-md ${
                   selectedOption ? "bg-neutral-700" : "bg-neutral-800"
                 }`}
               >
@@ -93,7 +91,7 @@ export default function FormatSelector({ format, setFormat, formatOptions }) {
                 )}
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-start space-x-2">
               <CaretUp
                 className={`h-4 w-4 transition-transform ${
                   open ? "rotate-180" : ""

@@ -5,6 +5,10 @@ import {
   FileImage,
   Spinner,
   ArrowLineRight,
+  Scissors,
+  Resize,
+  Palette,
+  Recycle,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,14 +22,9 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
+import useFileStore from "@/stores/use-file-store";
 
 export default function UploadCard({
-  file,
-  setFile,
-  preview,
-  dragActive,
-  setDragActive,
-  setPreview,
   loading,
   onSubmit,
   onClearResult,
@@ -35,33 +34,47 @@ export default function UploadCard({
   acceptedFormats = "PNG, JPG, WEBP up to 10MB",
   children,
   customContent,
+  tabId,
 }) {
+  const {
+    file,
+    preview,
+    dragActive,
+    setDragActive,
+    handleFileSelection,
+    setUploadedFrom,
+  } = useFileStore();
+
+  const iconMap = {
+    crop: Scissors,
+    convert: Recycle,
+    compress: Resize,
+    "color-palette": Palette,
+  };
+
+  const Icon = iconMap[tabId] || UploadSimple;
+
   const handleFileChange = (selectedFile) => {
     if (onClearResult) {
       onClearResult();
     }
 
-    if (selectedFile) {
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        toast.error("File size exceeds 10MB.", {
-          action: {
-            label: "Close",
-            onClick: () => {
-              toast.dismiss();
-            },
+    const result = handleFileSelection(selectedFile);
+
+    if (!result.success && result.error) {
+      toast.error(result.error, {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
           },
-        });
-        setFile(null);
-        setPreview(null);
-        return;
-      }
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onload = (e) => setPreview(e.target.result);
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setFile(null);
-      setPreview(null);
+        },
+      });
+      return;
+    }
+
+    if (selectedFile && tabId) {
+      setUploadedFrom(tabId);
     }
   };
 
@@ -85,10 +98,10 @@ export default function UploadCard({
   };
 
   return (
-    <Card className="flex flex-col border shadow-sm h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden">
+    <Card className="flex flex-col border shadow-sm h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden rounded-xl">
       <CardHeader className="pb-4 flex-shrink-0">
         <CardTitle className="flex items-center space-x-2 text-neutral-200">
-          <UploadSimple className="h-5 w-5" />
+          <Icon className="h-5 w-5" />
           <span>{title}</span>
         </CardTitle>
         <CardDescription className="text-neutral-400">
@@ -159,7 +172,7 @@ export default function UploadCard({
             <Button
               onClick={onSubmit}
               disabled={!file || loading}
-              className="w-full py-4 cursor-pointer bg-neutral-800 text-neutral-200"
+              className="w-full py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
               size="lg"
             >
               {loading ? (

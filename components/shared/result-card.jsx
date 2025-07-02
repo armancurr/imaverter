@@ -70,7 +70,7 @@ export default function ResultCard({
   }, [resultUrl, showToast, toastMessage]);
 
   return (
-    <Card className="flex flex-col border shadow-lg h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden">
+    <Card className="flex flex-col border shadow-lg h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden rounded-xl">
       <CardHeader className="pb-4 flex-shrink-0">
         <CardTitle className="flex items-center space-x-2 text-neutral-100">
           {customIcon || <DownloadSimple className="h-5 w-5" />}
@@ -158,7 +158,7 @@ export default function ResultCard({
           <Button
             onClick={onDownload}
             disabled={!resultUrl}
-            className="w-full py-4 cursor-pointer bg-neutral-800 text-neutral-200"
+            className="w-full py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
             size="lg"
           >
             {finalDownloadButtonText}
