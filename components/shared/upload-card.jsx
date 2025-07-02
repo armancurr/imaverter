@@ -236,7 +236,7 @@ export default function UploadCard({
                   <Button
                     onClick={handleNewUpload}
                     disabled={loading}
-                    className="py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
+                    className="flex-1 py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
                     size="lg"
                   >
                     <UploadSimple className="h-5 w-5" />

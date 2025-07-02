@@ -1,21 +1,19 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 import { FileImage } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useFileStore from "@/stores/use-file-store";
 import { toast } from "sonner";
 
-const Cropper = dynamic(() => import("react-easy-crop"), { ssr: false });
-
 export default function CropCanvas({
   preview,
   crop,
   setCrop,
-  zoom,
-  setZoom,
   onCropComplete,
+  onImageLoad,
   cornerRadius,
   onClearResult,
 }) {
@@ -68,7 +66,7 @@ export default function CropCanvas({
   if (!preview) {
     return (
       <div
-        className={`flex-1 min-h-[280px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center border-neutral-600 ${
+        className={`w-full h-full min-h-[280px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center border-neutral-600 ${
           dragActive ? "shadow-lg scale-[1.02]" : "hover:shadow-md"
         }`}
         onDragEnter={handleDrag}
@@ -105,17 +103,28 @@ export default function CropCanvas({
   }
 
   return (
-    <div className="flex-1 relative overflow-hidden min-h-[280px]">
-      <Cropper
-        image={preview}
+    <div className="w-full h-full flex items-center justify-center p-4">
+      <ReactCrop
         crop={crop}
-        zoom={zoom}
-        aspect={1}
-        onCropChange={setCrop}
-        onCropComplete={onCropComplete}
-        onZoomChange={setZoom}
-        cropShape={cornerRadius >= 100 ? "round" : "rect"}
-      />
+        onChange={(crop, percentCrop) => setCrop(percentCrop)}
+        onComplete={onCropComplete}
+        circularCrop={cornerRadius >= 100}
+        style={{ maxWidth: '100%', maxHeight: '100%' }}
+      >
+        <img 
+          src={preview} 
+          onLoad={onImageLoad}
+          alt="Crop preview"
+          style={{ 
+            maxWidth: '100%', 
+            maxHeight: '100%',
+            width: 'auto',
+            height: 'auto',
+            display: 'block',
+            objectFit: 'contain'
+          }}
+        />
+      </ReactCrop>
     </div>
   );
 }

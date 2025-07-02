@@ -3,21 +3,39 @@ import { toast } from "sonner";
 import useRecentImages from "./use-recent-images";
 
 export default function useCropImage() {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  // Start with no initial crop - let user define it
+  const [crop, setCrop] = useState();
+  const [completedCrop, setCompletedCrop] = useState(null);
   const [cornerRadius, setCornerRadius] = useState(0);
   const [loading, setLoading] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   const [currentFile, setCurrentFile] = useState(null);
+  const [imgRef, setImgRef] = useState(null);
   const { addRecentImage } = useRecentImages();
 
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
+  const onImageLoad = useCallback((e) => {
+    setImgRef(e.currentTarget);
+    // Set a default crop when image loads (centered 70% crop)
+    const { width, height } = e.currentTarget;
+    const defaultCrop = {
+      unit: '%',
+      x: 15,
+      y: 15,
+      width: 70,
+      height: 70
+    };
+    setCrop(defaultCrop);
   }, []);
 
-  const createCroppedImage = async (preview, file) => {
-    if (!preview || !croppedAreaPixels) return;
+  const onCropComplete = useCallback((crop, percentCrop) => {
+    setCompletedCrop(crop);
+  }, []);
+
+  const createCroppedImage = async (file) => {
+    if (!imgRef || !completedCrop || completedCrop.width === 0 || completedCrop.height === 0) {
+      toast.error("Please select a crop area first");
+      return;
+    }
 
     if (file) {
       setCurrentFile(file);
@@ -27,68 +45,101 @@ export default function useCropImage() {
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      const image = new Image();
+      
+      // Calculate scale factors between displayed image and actual image
+      const scaleX = imgRef.naturalWidth / imgRef.width;
+      const scaleY = imgRef.naturalHeight / imgRef.height;
+      
+      // Use device pixel ratio for crisp images on high DPI displays
+      const pixelRatio = window.devicePixelRatio;
+      
+      // Calculate actual crop dimensions
+      const cropX = completedCrop.x * scaleX;
+      const cropY = completedCrop.y * scaleY;
+      const cropWidth = completedCrop.width * scaleX;
+      const cropHeight = completedCrop.height * scaleY;
 
-      image.onload = () => {
-        const { width, height, x, y } = croppedAreaPixels;
+      // Set canvas size accounting for pixel ratio
+      canvas.width = cropWidth * pixelRatio;
+      canvas.height = cropHeight * pixelRatio;
+      
+      // Scale the canvas back down using CSS
+      canvas.style.width = cropWidth + 'px';
+      canvas.style.height = cropHeight + 'px';
+      
+      // Scale the drawing context so everything draws at the correct size
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      ctx.imageSmoothingQuality = 'high';
 
-        canvas.width = width;
-        canvas.height = height;
-
-        if (cornerRadius > 0) {
-          ctx.beginPath();
-          if (cornerRadius >= 100) {
-            const radius = Math.min(width, height) / 2;
-            ctx.arc(width / 2, height / 2, radius, 0, 2 * Math.PI);
-          } else {
-            const r = Math.min(cornerRadius, width / 2, height / 2);
-            ctx.moveTo(r, 0);
-            ctx.lineTo(width - r, 0);
-            ctx.quadraticCurveTo(width, 0, width, r);
-            ctx.lineTo(width, height - r);
-            ctx.quadraticCurveTo(width, height, width - r, height);
-            ctx.lineTo(r, height);
-            ctx.quadraticCurveTo(0, height, 0, height - r);
-            ctx.lineTo(0, r);
-            ctx.quadraticCurveTo(0, 0, r, 0);
-            ctx.closePath();
-          }
-          ctx.clip();
+      // Apply corner radius clipping if specified
+      if (cornerRadius > 0) {
+        ctx.beginPath();
+        if (cornerRadius >= 100) {
+          // Circle crop - use the smaller dimension as diameter
+          const radius = Math.min(cropWidth, cropHeight) / 2;
+          const centerX = cropWidth / 2;
+          const centerY = cropHeight / 2;
+          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        } else {
+          // Rounded rectangle crop
+          const r = Math.min(cornerRadius, cropWidth / 2, cropHeight / 2);
+          ctx.moveTo(r, 0);
+          ctx.lineTo(cropWidth - r, 0);
+          ctx.quadraticCurveTo(cropWidth, 0, cropWidth, r);
+          ctx.lineTo(cropWidth, cropHeight - r);
+          ctx.quadraticCurveTo(cropWidth, cropHeight, cropWidth - r, cropHeight);
+          ctx.lineTo(r, cropHeight);
+          ctx.quadraticCurveTo(0, cropHeight, 0, cropHeight - r);
+          ctx.lineTo(0, r);
+          ctx.quadraticCurveTo(0, 0, r, 0);
+          ctx.closePath();
         }
+        ctx.clip();
+      }
 
-        ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+      // Draw the cropped image
+      ctx.drawImage(
+        imgRef,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        cropWidth,
+        cropHeight
+      );
 
-        const croppedDataUrl = canvas.toDataURL("image/png");
-        setCroppedImage(croppedDataUrl);
+      // Convert to data URL
+      const croppedDataUrl = canvas.toDataURL("image/png", 1.0);
+      setCroppedImage(croppedDataUrl);
 
-        const fileName = (file || currentFile)?.name || "image";
-        const shapeDescription =
-          cornerRadius >= 100
-            ? "Circle crop"
-            : cornerRadius > 0
-              ? `Rounded crop (${cornerRadius}px)`
-              : "Rectangular crop";
+      // Add to recent images
+      const fileName = (file || currentFile)?.name || "image";
+      const shapeDescription =
+        cornerRadius >= 100
+          ? "Circle crop"
+          : cornerRadius > 0
+            ? `Rounded crop (${cornerRadius}px)`
+            : "Rectangular crop";
 
-        addRecentImage({
-          type: "crop",
-          originalName: fileName,
-          resultUrl: croppedDataUrl,
-          format: "png",
-          action: shapeDescription,
-          downloadName: `${fileName.split(".")[0]}-cropped-${cornerRadius >= 100 ? "circle" : `radius-${cornerRadius}`}.png`,
-        });
+      addRecentImage({
+        type: "crop",
+        originalName: fileName,
+        resultUrl: croppedDataUrl,
+        format: "png",
+        action: shapeDescription,
+        downloadName: `${fileName.split(".")[0]}-cropped-${cornerRadius >= 100 ? "circle" : `radius-${cornerRadius}`}.png`,
+      });
 
-        toast.success("Image cropped successfully!", {
-          action: {
-            label: "Close",
-            onClick: () => {
-              toast.dismiss();
-            },
+      toast.success("Image cropped successfully!", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
           },
-        });
-      };
-
-      image.src = preview;
+        },
+      });
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Failed to crop image");
@@ -110,17 +161,28 @@ export default function useCropImage() {
 
   const clearCroppedImage = () => {
     setCroppedImage(null);
+    setCompletedCrop(null);
+    // Reset crop to default when clearing
+    if (imgRef) {
+      const defaultCrop = {
+        unit: '%',
+        x: 15,
+        y: 15,
+        width: 70,
+        height: 70
+      };
+      setCrop(defaultCrop);
+    }
   };
 
   return {
     crop,
-    zoom,
     cornerRadius,
     loading,
     croppedImage,
     setCrop,
-    setZoom,
     setCornerRadius,
+    onImageLoad,
     onCropComplete,
     createCroppedImage,
     downloadCroppedImage,

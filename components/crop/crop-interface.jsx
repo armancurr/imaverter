@@ -11,13 +11,12 @@ export default function CropInterface() {
   const { file, preview } = useFileStore();
   const {
     crop,
-    zoom,
     cornerRadius,
     loading,
     croppedImage,
     setCrop,
-    setZoom,
     setCornerRadius,
+    onImageLoad,
     onCropComplete,
     createCroppedImage,
     downloadCroppedImage,
@@ -25,7 +24,7 @@ export default function CropInterface() {
   } = useCropImage();
 
   const handleCropSubmit = () => {
-    createCroppedImage(preview, file);
+    createCroppedImage(file);
   };
 
   return (
@@ -42,24 +41,25 @@ export default function CropInterface() {
             buttonText="Crop Image"
             acceptedFormats="PNG, JPG, WEBP up to 10MB"
             customContent={
-              <CropCanvas
-                preview={preview}
-                crop={crop}
-                setCrop={setCrop}
-                zoom={zoom}
-                setZoom={setZoom}
-                onCropComplete={onCropComplete}
-                cornerRadius={cornerRadius}
-                onClearResult={clearCroppedImage}
-              />
+              <div className="flex-1 w-full min-h-0 flex flex-col">
+                <div className="flex-1 w-full min-h-0 overflow-hidden">
+                  <CropCanvas
+                    preview={preview}
+                    crop={crop}
+                    setCrop={setCrop}
+                    onImageLoad={onImageLoad}
+                    onCropComplete={onCropComplete}
+                    cornerRadius={cornerRadius}
+                    onClearResult={clearCroppedImage}
+                  />
+                </div>
+              </div>
             }
           >
             {preview && (
               <CropControls
                 cornerRadius={cornerRadius}
                 setCornerRadius={setCornerRadius}
-                zoom={zoom}
-                setZoom={setZoom}
               />
             )}
           </UploadCard>
