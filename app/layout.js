@@ -1,5 +1,4 @@
-import { ReactScan } from "@/lib/react-scan";
-import { funnelSans } from "@/app/fonts";
+import { funnelSans, geistMono } from "@/app/fonts";
 import { Toaster } from "sonner";
 import "@/app/globals.css";
 
@@ -15,9 +14,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <ReactScan />
       <body
-        className={`${funnelSans.variable} antialiased bg-neutral-950 text-neutral-200`}
+        className={`${funnelSans.variable} ${geistMono.variable} antialiased bg-gradient-to-t from-neutral-900 to-neutral-950 text-neutral-200`}
       >
         {children}
         {/* <Toaster

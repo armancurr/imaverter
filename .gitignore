@@ -1,9 +1,5 @@
 node_modules
-dist
-build
 .next
 .vercel
-.env
 .env.local
 .env.production
-package-lock.json

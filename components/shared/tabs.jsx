@@ -6,9 +6,14 @@ import {
   Palette,
   GithubLogo,
   Recycle,
+  Timer,
 } from "@phosphor-icons/react";
 
-export default function TopDock({ activeTab, setActiveTab }) {
+export default function TopDock({
+  activeTab,
+  setActiveTab,
+  toggleCommandPalette,
+}) {
   const tabs = [
     {
       id: "crop",
@@ -84,6 +89,15 @@ export default function TopDock({ activeTab, setActiveTab }) {
         })}
 
         <div className="w-px h-10 bg-neutral-800 rounded-full" />
+
+        <button
+          onClick={toggleCommandPalette}
+          className={buttonBaseClass}
+          title="Recent Images (Cmd+K)"
+          type="button"
+        >
+          <Timer size={20} />
+        </button>
 
         <button
           onClick={() =>
