@@ -7,6 +7,7 @@ import ConvertInterface from "@/components/convert/convert-interface";
 import CropInterface from "@/components/crop/crop-interface";
 import CompressInterface from "@/components/compress/compress-interface";
 import ColorPaletteInterface from "@/components/color-palette/color-palette-interface";
+import MetadataEditor from "@/components/metadata/metadata-editor";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("crop");
@@ -32,6 +33,11 @@ export default function Home() {
           style={{ display: activeTab === "color-palette" ? "block" : "none" }}
         >
           <ColorPaletteInterface />
+        </div>
+        <div
+          style={{ display: activeTab === "metadata" ? "block" : "none" }}
+        >
+          <MetadataEditor />
         </div>
       </>
     );

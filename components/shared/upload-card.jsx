@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
+import { useRef } from 'react';
 import {
   UploadSimple,
   FileImage,
@@ -10,29 +10,30 @@ import {
   Resize,
   Palette,
   Recycle,
-} from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
+  Database,
+} from '@phosphor-icons/react';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { toast } from "sonner";
-import { Label } from "@/components/ui/label";
-import useFileStore from "@/stores/use-file-store";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import Image from 'next/image';
+import { toast } from 'sonner';
+import { Label } from '@/components/ui/label';
+import useFileStore from '@/stores/use-file-store';
 
 export default function UploadCard({
   loading,
   onSubmit,
   onClearResult,
-  title = "Upload Image",
-  description = "Select an image to process",
-  buttonText = "Process Image",
-  acceptedFormats = "PNG, JPG, WEBP up to 10MB",
+  title = 'Upload Image',
+  description = 'Select an image to process',
+  buttonText = 'Process Image',
+  acceptedFormats = 'PNG, JPG, WEBP up to 10MB',
   children,
   customContent,
   tabId,
@@ -54,7 +55,8 @@ export default function UploadCard({
     crop: Scissors,
     convert: Recycle,
     compress: Resize,
-    "color-palette": Palette,
+    'color-palette': Palette,
+    metadata: Database,
   };
 
   const Icon = iconMap[tabId] || UploadSimple;
@@ -63,21 +65,13 @@ export default function UploadCard({
     if (onClearResult) {
       onClearResult();
     }
-
     const result = handleFileSelection(selectedFile);
-
     if (!result.success && result.error) {
       toast.error(result.error, {
-        action: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
+        action: { label: 'Close', onClick: () => toast.dismiss() },
       });
       return;
     }
-
     if (selectedFile && tabId) {
       setUploadedFrom(tabId);
     }
@@ -86,9 +80,9 @@ export default function UploadCard({
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -108,33 +102,24 @@ export default function UploadCard({
 
   const handleNewFileChange = (selectedFile) => {
     if (!selectedFile) return;
-
     if (onClearResult) {
       onClearResult();
     }
     clearFile();
-
     const result = handleFileSelection(selectedFile);
-
     if (!result.success && result.error) {
       toast.error(result.error, {
-        action: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
+        action: { label: 'Close', onClick: () => toast.dismiss() },
       });
       return;
     }
-
     if (selectedFile && tabId) {
       setUploadedFrom(tabId);
     }
   };
 
   return (
-    <Card className="flex flex-col border shadow-sm h-full bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden rounded-xl">
+    <Card className="h-full flex flex-col border shadow-sm bg-gradient-to-b from-neutral-900 to-neutral-950 border-2 border-neutral-800 overflow-hidden rounded-xl">
       <CardHeader className="pb-4 flex-shrink-0">
         <CardTitle className="flex items-center space-x-2 text-neutral-200">
           <Icon className="h-5 w-5" />
@@ -144,18 +129,14 @@ export default function UploadCard({
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col flex-1 p-6 min-h-0">
+      <CardContent className="flex-1 flex flex-col p-6 min-h-0">
         <div className="flex-1 flex flex-col min-h-0">
           {customContent ? (
             <div className="flex-1 flex flex-col min-h-0">{customContent}</div>
           ) : (
             <div
               className={`flex-1 min-h-[280px] rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 flex items-center justify-center border-neutral-600 ${
-                dragActive
-                  ? "shadow-lg scale-[1.02]"
-                  : file
-                    ? "shadow-md"
-                    : "hover:shadow-md"
+                dragActive ? 'shadow-lg scale-[1.02]' : 'hover:shadow-md'
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -170,7 +151,6 @@ export default function UploadCard({
                 className="hidden"
                 onChange={(e) => handleFileChange(e.target.files[0])}
               />
-
               <Label
                 htmlFor="file-upload-shared"
                 className="block cursor-pointer w-full h-full flex items-center justify-center"
@@ -214,9 +194,7 @@ export default function UploadCard({
                 size="lg"
               >
                 {loading ? (
-                  <>
-                    <Spinner className="h-5 w-5 animate-spin" />
-                  </>
+                  <Spinner className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
                     {buttonText}
@@ -240,7 +218,6 @@ export default function UploadCard({
                     size="lg"
                   >
                     <UploadSimple className="h-5 w-5" />
-                    <span>Upload New Image</span>
                   </Button>
                 </>
               )}

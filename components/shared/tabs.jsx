@@ -7,6 +7,7 @@ import {
   GithubLogo,
   Recycle,
   Timer,
+  Info,
 } from "@phosphor-icons/react";
 
 export default function TopDock({
@@ -38,6 +39,12 @@ export default function TopDock({
       label: "Color-Palette",
       icon: Palette,
       title: "Color Palette Extractor",
+    },
+    {
+      id: "metadata",
+      label: "Metadata",
+      icon: Info,
+      title: "View & Edit Metadata",
     },
   ];
 
@@ -80,7 +87,7 @@ export default function TopDock({
               className={`${buttonBaseClass} ${
                 isActive ? buttonActiveClass : ""
               }`}
-              title={tab.label}
+              title={tab.title}
               type="button"
             >
               <Icon size={20} />
