@@ -28,6 +28,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^17.0.0",
     "exiftool-vendored": "^30.3.0",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.511.0",
     "ml-kmeans": "^6.0.0",
     "next": "15.3.3",
