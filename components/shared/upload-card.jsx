@@ -11,6 +11,7 @@ import {
   Palette,
   Recycle,
   Database,
+  Plus,
 } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import {
@@ -44,11 +45,16 @@ export default function UploadCard({
   const {
     file,
     preview,
+    convertFiles,
+    convertPreviews,
     dragActive,
     setDragActive,
     handleFileSelection,
+    handleConvertFileSelection,
+    handleMultipleConvertFiles,
     setUploadedFrom,
     clearFile,
+    clearConvertFiles,
   } = useFileStore();
 
   const iconMap = {
@@ -65,7 +71,14 @@ export default function UploadCard({
     if (onClearResult) {
       onClearResult();
     }
-    const result = handleFileSelection(selectedFile);
+    
+    let result;
+    if (tabId === 'convert') {
+      result = handleConvertFileSelection(selectedFile);
+    } else {
+      result = handleFileSelection(selectedFile);
+    }
+    
     if (!result.success && result.error) {
       toast.error(result.error, {
         action: { label: 'Close', onClick: () => toast.dismiss() },
@@ -91,8 +104,29 @@ export default function UploadCard({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileChange(e.dataTransfer.files[0]);
+    
+    if (e.dataTransfer.files) {
+      if (tabId === 'convert') {
+                 // Handle multiple files for convert
+         const result = handleMultipleConvertFiles(e.dataTransfer.files);
+        if (!result.success && result.error) {
+          toast.error(result.error, {
+            action: { label: 'Close', onClick: () => toast.dismiss() },
+          });
+        } else if (result.addedCount > 0) {
+          toast.success(`${result.addedCount} image${result.addedCount > 1 ? 's' : ''} added for conversion`, {
+            action: { label: 'Close', onClick: () => toast.dismiss() },
+          });
+        }
+        if (tabId) {
+          setUploadedFrom(tabId);
+        }
+      } else {
+        // Handle single file for other tabs
+        if (e.dataTransfer.files[0]) {
+          handleFileChange(e.dataTransfer.files[0]);
+        }
+      }
     }
   };
 
@@ -105,14 +139,27 @@ export default function UploadCard({
     if (onClearResult) {
       onClearResult();
     }
-    clearFile();
-    const result = handleFileSelection(selectedFile);
-    if (!result.success && result.error) {
-      toast.error(result.error, {
-        action: { label: 'Close', onClick: () => toast.dismiss() },
-      });
-      return;
+    
+    if (tabId === 'convert') {
+      clearConvertFiles();
+      const result = handleConvertFileSelection(selectedFile);
+      if (!result.success && result.error) {
+        toast.error(result.error, {
+          action: { label: 'Close', onClick: () => toast.dismiss() },
+        });
+        return;
+      }
+    } else {
+      clearFile();
+      const result = handleFileSelection(selectedFile);
+      if (!result.success && result.error) {
+        toast.error(result.error, {
+          action: { label: 'Close', onClick: () => toast.dismiss() },
+        });
+        return;
+      }
     }
+    
     if (selectedFile && tabId) {
       setUploadedFrom(tabId);
     }
@@ -148,22 +195,50 @@ export default function UploadCard({
                 id="file-upload-shared"
                 type="file"
                 accept="image/*"
+                multiple={tabId === 'convert'}
                 className="hidden"
-                onChange={(e) => handleFileChange(e.target.files[0])}
+                onChange={(e) => {
+                  if (tabId === 'convert') {
+                    const result = handleMultipleConvertFiles(e.target.files);
+                    if (!result.success && result.error) {
+                      toast.error(result.error, {
+                        action: { label: 'Close', onClick: () => toast.dismiss() },
+                      });
+                    } else if (result.addedCount > 0) {
+                      toast.success(`${result.addedCount} image${result.addedCount > 1 ? 's' : ''} added for conversion`, {
+                        action: { label: 'Close', onClick: () => toast.dismiss() },
+                      });
+                    }
+                    if (tabId) {
+                      setUploadedFrom(tabId);
+                    }
+                  } else {
+                    handleFileChange(e.target.files[0]);
+                  }
+                }}
               />
               <Label
                 htmlFor="file-upload-shared"
                 className="block cursor-pointer w-full h-full flex items-center justify-center"
               >
-                {preview ? (
+                {(tabId === 'convert' ? convertFiles.length > 0 : preview) ? (
                   <div className="space-y-3 w-full">
-                    <Image
-                      src={preview}
-                      alt="Preview"
-                      className="mx-auto rounded-md object-contain max-h-[240px] max-w-full"
-                      width={400}
-                      height={400}
-                    />
+                    {tabId === 'convert' ? (
+                      <div className="text-center">
+                        <FileImage className="mx-auto h-10 w-10 text-green-400" />
+                        <p className="font-medium text-md text-green-400 mt-2">
+                          {convertFiles.length} image{convertFiles.length > 1 ? 's' : ''} ready for conversion
+                        </p>
+                      </div>
+                    ) : (
+                      <Image
+                        src={preview}
+                        alt="Preview"
+                        className="mx-auto rounded-md object-contain max-h-[240px] max-w-full"
+                        width={400}
+                        height={400}
+                      />
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -189,7 +264,7 @@ export default function UploadCard({
             <div className="flex gap-2">
               <Button
                 onClick={onSubmit}
-                disabled={!file || loading}
+                disabled={tabId === 'convert' ? convertFiles.length === 0 || loading : !file || loading}
                 className="flex-1 py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
                 size="lg"
               >
@@ -202,22 +277,45 @@ export default function UploadCard({
                   </>
                 )}
               </Button>
-              {file && (
+              {(tabId === 'convert' ? convertFiles.length > 0 && convertFiles.length < 3 : file) && (
                 <>
                   <Input
                     ref={newUploadInputRef}
                     type="file"
                     accept="image/*"
+                    multiple={tabId === 'convert'}
                     className="hidden"
-                    onChange={(e) => handleNewFileChange(e.target.files[0])}
+                    onChange={(e) => {
+                      if (tabId === 'convert') {
+                        const result = handleMultipleConvertFiles(e.target.files);
+                        if (!result.success && result.error) {
+                          toast.error(result.error, {
+                            action: { label: 'Close', onClick: () => toast.dismiss() },
+                          });
+                        } else if (result.addedCount > 0) {
+                          toast.success(`${result.addedCount} image${result.addedCount > 1 ? 's' : ''} added for conversion`, {
+                            action: { label: 'Close', onClick: () => toast.dismiss() },
+                          });
+                        }
+                      } else {
+                        handleNewFileChange(e.target.files[0]);
+                      }
+                    }}
                   />
                   <Button
-                    onClick={handleNewUpload}
+                    onClick={() => newUploadInputRef.current?.click()}
                     disabled={loading}
                     className="py-4 cursor-pointer bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 hover:from-neutral-800 hover:to-neutral-900 transition-colors duration-200"
                     size="lg"
                   >
-                    <UploadSimple className="h-5 w-5" />
+                    {tabId === 'convert' ? (
+                      <>
+                        <Plus className="h-5 w-5 mr-2" />
+                        Add ({3 - convertFiles.length})
+                      </>
+                    ) : (
+                      <UploadSimple className="h-5 w-5" />
+                    )}
                   </Button>
                 </>
               )}

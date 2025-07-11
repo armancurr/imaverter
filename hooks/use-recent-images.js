@@ -75,6 +75,12 @@ export default function useRecentImages() {
 
   const addRecentImage = async (imageData) => {
     try {
+      // Skip saving to recent images if it's a large data URL to avoid storage quota issues
+      if (isDataUrl(imageData.resultUrl)) {
+        console.log("Skipping recent images save for local conversion to avoid storage quota");
+        return;
+      }
+
       const thumbnailUrl = await createCompressedThumbnail(imageData.resultUrl);
 
       const newItem = {
@@ -82,15 +88,11 @@ export default function useRecentImages() {
         timestamp: Date.now(),
         ...imageData,
         thumbnailUrl,
-        downloadUrl: isDataUrl(imageData.resultUrl)
-          ? imageData.resultUrl
-          : imageData.resultUrl,
-        isLocal: isDataUrl(imageData.resultUrl),
+        downloadUrl: imageData.resultUrl,
+        isLocal: false,
       };
 
-      if (!isDataUrl(imageData.resultUrl)) {
-        newItem.resultUrl = imageData.resultUrl;
-      }
+      newItem.resultUrl = imageData.resultUrl;
 
       const updated = [newItem, ...recentImages].slice(0, MAX_RECENT_ITEMS);
 
