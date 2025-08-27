@@ -182,7 +182,9 @@ export default function MetadataEditor() {
     } catch (error) {
       console.error('Error stripping metadata:', error);
       if (error.name === 'AbortError') {
-        toast.error('Strip operation timed out. Please try with a smaller file.');
+        toast.error(
+          'Strip operation timed out. Please try with a smaller file.'
+        );
       } else {
         toast.error(error.message || 'Failed to strip metadata');
       }
@@ -229,7 +231,9 @@ export default function MetadataEditor() {
     } catch (error) {
       console.error('Error editing metadata:', error);
       if (error.name === 'AbortError') {
-        toast.error('Edit operation timed out. Please try with a smaller file.');
+        toast.error(
+          'Edit operation timed out. Please try with a smaller file.'
+        );
       } else {
         toast.error(error.message || 'Failed to edit metadata');
       }
@@ -301,7 +305,18 @@ export default function MetadataEditor() {
         </div>
       </div>
 
-      <div className="flex-1 max-w-7xl w-full mx-auto min-h-0 mt-8">
+      {/*
+       * MODIFICATION:
+       * Conditionally apply classes for scrolling.
+       * - For 'single' view: 'min-h-0' is crucial for the flexbox layout to work correctly without page scroll.
+       * - For 'batch' view: 'overflow-y-auto' allows this container to scroll if the BatchProcessor content is too tall.
+       *   'pb-8' adds some padding at the bottom for better spacing when scrolled to the end.
+       */}
+      <div
+        className={`flex-1 max-w-7xl w-full mx-auto mt-8 ${
+          activeTab === 'single' ? 'min-h-0' : 'overflow-y-auto pb-8'
+        }`}
+      >
         {activeTab === 'single' ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
             {/* --- Left Column Card --- */}
@@ -314,7 +329,9 @@ export default function MetadataEditor() {
                     <PencilSimple className="h-5 w-5" />
                   )}
                   <span>
-                    {viewMode === 'upload' ? 'Extract Metadata' : 'Edit Metadata'}
+                    {viewMode === 'upload'
+                      ? 'Extract Metadata'
+                      : 'Edit Metadata'}
                   </span>
                 </CardTitle>
                 <CardDescription className="text-neutral-400">

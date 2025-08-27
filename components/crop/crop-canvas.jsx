@@ -116,6 +116,19 @@ export default function CropCanvas({
         onZoomChange={setZoom}
         cropShape={cornerRadius >= 100 ? "round" : "rect"}
       />
+      {cornerRadius > 0 && cornerRadius < 100 && (
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <div 
+            className="border-2 border-white/60 bg-transparent shadow-lg"
+            style={{
+              width: "180px",
+              height: "180px",
+              borderRadius: `${cornerRadius}px`,
+              boxShadow: "0 0 0 1px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.2)"
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

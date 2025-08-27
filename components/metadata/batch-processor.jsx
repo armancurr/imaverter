@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import {
-  Upload, // Corrected: Changed from UploadCloud to Upload
+  Upload,
   X,
   Spinner,
   ArrowLineRight,
@@ -95,7 +95,15 @@ export default function BatchProcessor() {
 
       const result = await response.json();
       setResults(result);
-      toast.success('Batch processing complete!');
+
+      // MODIFICATION: Provide a specific success message based on the operation.
+      if (operation === 'extract') {
+        toast.success('Metadata extracted successfully!');
+      } else if (operation === 'strip') {
+        toast.success('Metadata stripped successfully!');
+      } else {
+        toast.success('Batch processing complete!');
+      }
     } catch (error) {
       console.error('Batch processing error:', error);
       toast.error('Batch processing failed', {
@@ -142,7 +150,9 @@ export default function BatchProcessor() {
           link.click();
           URL.revokeObjectURL(url);
         });
-        toast.success(`Downloading ${successfulResults.length} stripped files.`);
+        toast.success(
+          `Downloading ${successfulResults.length} stripped files.`
+        );
       } else {
         toast.error('No files were successfully stripped to download.');
       }
@@ -179,14 +189,20 @@ export default function BatchProcessor() {
               <SelectTrigger className="w-full lg:w-1/2 bg-neutral-800 border-neutral-700 text-neutral-200">
                 <SelectValue placeholder="Select an operation" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="extract">
+              <SelectContent className="bg-neutral-800 border border-neutral-700">
+                <SelectItem
+                  value="extract"
+                  className="data-[state=checked]:bg-neutral-800 data-[state=checked]:text-white data-[highlighted]:bg-neutral-700 data-[highlighted]:text-white text-white"
+                >
                   <div className="flex items-center">
                     <Database className="h-4 w-4 mr-2" />
                     Extract Comprehensive Metadata
                   </div>
                 </SelectItem>
-                <SelectItem value="strip">
+                <SelectItem
+                  value="strip"
+                  className="data-[state=checked]:bg-neutral-800 data-[state=checked]:text-white data-[highlighted]:bg-neutral-700 data-[highlighted]:text-white text-white"
+                >
                   <div className="flex items-center">
                     <Scissors className="h-4 w-4 mr-2" />
                     Strip All Metadata
@@ -230,7 +246,8 @@ export default function BatchProcessor() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="text-md font-medium text-neutral-300">
-                Selected Files ({files.length}) - {formatFileSize(getTotalSize())}
+                Selected Files ({files.length}) -{' '}
+                {formatFileSize(getTotalSize())}
               </h4>
               {!isProcessing && (
                 <Button
@@ -304,8 +321,8 @@ export default function BatchProcessor() {
                   Processing Results
                 </h4>
                 <div className="text-sm text-neutral-400">
-                  {results.summary.successful} successful, {results.summary.failed}{' '}
-                  failed
+                  {results.summary.successful} successful,{' '}
+                  {results.summary.failed} failed
                 </div>
               </div>
               <Button onClick={downloadResults} variant="outline">
@@ -316,7 +333,10 @@ export default function BatchProcessor() {
 
             <div className="space-y-2 max-h-80 overflow-y-auto p-1 rounded-md bg-neutral-900 border border-neutral-800">
               {results.results.map((result, index) => (
-                <div key={index} className="p-3 rounded-md bg-neutral-800/50">
+                <div
+                  key={index}
+                  className="p-3 rounded-md bg-neutral-800/50"
+                >
                   <div className="flex items-center">
                     {result.success ? (
                       <CheckCircle

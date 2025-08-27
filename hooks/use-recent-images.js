@@ -40,31 +40,52 @@ export default function useRecentImages() {
   const createCompressedThumbnail = (imageUrl) => {
     return new Promise((resolve) => {
       const img = new Image();
+      
+      // Set crossOrigin to handle CORS for external images
+      img.crossOrigin = "anonymous";
+      
       img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        try {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
-        const aspectRatio = img.width / img.height;
-        let width = THUMBNAIL_SIZE;
-        let height = THUMBNAIL_SIZE;
+          const aspectRatio = img.width / img.height;
+          let width = THUMBNAIL_SIZE;
+          let height = THUMBNAIL_SIZE;
 
-        if (aspectRatio > 1) {
-          height = THUMBNAIL_SIZE / aspectRatio;
-        } else {
-          width = THUMBNAIL_SIZE * aspectRatio;
+          if (aspectRatio > 1) {
+            height = THUMBNAIL_SIZE / aspectRatio;
+          } else {
+            width = THUMBNAIL_SIZE * aspectRatio;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL(
+            "image/jpeg",
+            THUMBNAIL_QUALITY,
+          );
+          resolve(compressedDataUrl);
+        } catch (error) {
+          // If canvas operations fail due to CORS, use original URL
+          console.warn("Canvas operation failed, using original URL:", error);
+          resolve(imageUrl);
         }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        ctx.drawImage(img, 0, 0, width, height);
-        const compressedDataUrl = canvas.toDataURL(
-          "image/jpeg",
-          THUMBNAIL_QUALITY,
-        );
-        resolve(compressedDataUrl);
       };
-      img.onerror = () => resolve(imageUrl);
+      
+      img.onerror = () => {
+        console.warn("Image load failed, using original URL");
+        resolve(imageUrl);
+      };
+      
+      // Handle CORS errors
+      img.onabort = () => {
+        console.warn("Image load aborted, using original URL");
+        resolve(imageUrl);
+      };
+      
       img.src = imageUrl;
     });
   };
@@ -129,28 +150,49 @@ export default function useRecentImages() {
   const createVerySmallThumbnail = (imageUrl) => {
     return new Promise((resolve) => {
       const img = new Image();
+      
+      // Set crossOrigin to handle CORS for external images
+      img.crossOrigin = "anonymous";
+      
       img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        try {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
-        const aspectRatio = img.width / img.height;
-        let width = 64;
-        let height = 64;
+          const aspectRatio = img.width / img.height;
+          let width = 64;
+          let height = 64;
 
-        if (aspectRatio > 1) {
-          height = 64 / aspectRatio;
-        } else {
-          width = 64 * aspectRatio;
+          if (aspectRatio > 1) {
+            height = 64 / aspectRatio;
+          } else {
+            width = 64 * aspectRatio;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.5);
+          resolve(compressedDataUrl);
+        } catch (error) {
+          // If canvas operations fail due to CORS, use original URL
+          console.warn("Canvas operation failed, using original URL:", error);
+          resolve(imageUrl);
         }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        ctx.drawImage(img, 0, 0, width, height);
-        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.5);
-        resolve(compressedDataUrl);
       };
-      img.onerror = () => resolve(imageUrl);
+      
+      img.onerror = () => {
+        console.warn("Image load failed, using original URL");
+        resolve(imageUrl);
+      };
+      
+      // Handle CORS errors
+      img.onabort = () => {
+        console.warn("Image load aborted, using original URL");
+        resolve(imageUrl);
+      };
+      
       img.src = imageUrl;
     });
   };

@@ -81,15 +81,38 @@ export default function ResultCard({
             customContent ? (
               <div className="h-full overflow-y-auto">{customContent}</div>
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Image
-                  src={resultUrl}
-                  alt="Processed result"
-                  className="max-w-full max-h-full object-contain"
-                  width={500}
-                  height={500}
-                  unoptimized
-                />
+              <div className="w-full h-full min-h-[280px] flex items-center justify-center">
+                {resultFormat === 'ico' ? (
+                  <div>
+                    <Image
+                      src={resultUrl}
+                      alt="ICO file preview"
+                      className="object-contain"
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      unoptimized
+                      style={{ 
+                        width: 'auto',
+                        height: 'auto',
+                        maxWidth: '200px',
+                        maxHeight: '200px',
+                        imageRendering: 'pixelated',
+                        imageRendering: '-moz-crisp-edges',
+                        imageRendering: 'crisp-edges'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <Image
+                    src={resultUrl}
+                    alt="Processed result"
+                    className="max-w-full max-h-full object-contain pb-10"
+                    width={800}
+                    height={600}
+                    unoptimized
+                  />
+                )}
               </div>
             )
           ) : (

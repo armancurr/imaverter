@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "validate-env": "node scripts/validate-env.js",
+    "predev": "npm run validate-env",
+    "prebuild": "npm run validate-env"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -26,7 +29,6 @@
     "cmdk": "^1.1.1",
     "colorjs.io": "^0.5.2",
     "crypto": "^1.0.1",
-    "dotenv": "^17.0.0",
     "exiftool-vendored": "^30.3.0",
     "lucide-react": "^0.511.0",
     "ml-kmeans": "^6.0.0",
@@ -42,6 +44,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "dotenv": "^17.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",
